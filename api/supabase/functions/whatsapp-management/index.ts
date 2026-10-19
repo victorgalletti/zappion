@@ -1,0 +1,641 @@
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { type Context, Hono, type Next } from "@hono/hono";
+import { cors } from "jsr:@hono/hono/cors";
+import { HTTPException } from "jsr:@hono/hono/http-exception";
+import * as log from "../_shared/logger.ts";
+import { Json } from "../_shared/db_types.ts";
+import {
+  createApiClient,
+  createClient,
+  createUnsecureClient,
+  type TemplateData,
+} from "../_shared/supabase.ts";
+import {
+  createTemplate,
+  deleteTemplate,
+  editTemplate,
+  fetchTemplate,
+  listTemplates,
+  uploadTemplateMedia,
+} from "./templates.ts";
+import {
+  deleteSignup,
+  performEmbeddedSignup,
+  recordSignupPopupEvent,
+  SignupPayload,
+  type SignupPopupEvent,
+} from "./embedded_signup.ts";
+import {
+  type ManualConnectPayload,
+  performManualConnect,
+} from "./manual_connect.ts";
+import {
+  configureMetaAppWebhook,
+  deleteMetaApp,
+  getMetaApp,
+  type MetaAppPayload,
+  saveMetaApp,
+  testMetaApp,
+} from "./zappion_meta_app.ts";
+import {
+  type ManagementEnv,
+  ownsAddress,
+  requireRoles,
+  requireScope,
+} from "../_shared/management_auth.ts";
+import { hashApiKey } from "../_shared/zappion_api_keys.ts";
+
+type TemplatePayload = {
+  organization_id: string;
+  organization_address: string;
+  template?: TemplateData;
+};
+
+type AppEnv = ManagementEnv;
+
+const app = new Hono<AppEnv>();
+
+// CORS middleware
+app.use("*", cors());
+
+// Surface thrown errors (and their `cause`) to the client and logs. Hono's
+// default handler only serializes an HTTPException's `message`, discarding the
+// `cause` where upstream details (e.g. the Graph API error) live.
+app.onError((err, c) => {
+  if (err instanceof HTTPException) {
+    log.error(
+      `${c.req.method} ${c.req.path} → ${err.status}: ${err.message}`,
+      err.cause,
+    );
+    return c.json(
+      { message: err.message, cause: err.cause as Json },
+      err.status,
+    );
+  }
+
+  log.error(`Unhandled error on ${c.req.method} ${c.req.path}`, err);
+  return c.json({ message: "Internal Server Error" }, 500);
+});
+
+// Validate user or key (skip for public onboard routes)
+app.use("*", async (c, next) => {
+  if (
+    c.req.path.endsWith("/onboard") || c.req.path.endsWith("/onboard/events")
+  ) {
+    await next();
+    return;
+  }
+
+  const token = c.req.header("Authorization")?.replace("Bearer ", "");
+
+  if (!token) {
+    throw new HTTPException(401, {
+      message: "Missing authorization token",
+    });
+  }
+
+  c.set("token", token);
+
+  // if token looks like JWT, try user
+  if (token.startsWith("eyJ")) {
+    const client = createClient(c.req.raw);
+
+    const { data: { user }, error: userError } = await client.auth.getUser();
+
+    if (userError || !user) {
+      log.error("Invalid JWT", userError);
+
+      throw new HTTPException(401, {
+        message: "Invalid JWT",
+        cause: userError,
+      });
+    }
+
+    c.set("user", user);
+    c.set("supabase", client);
+
+    await next();
+
+    return;
+  }
+
+  const client = createApiClient(c.req.raw);
+
+  const { data: apiKey, error: apiKeyError } = await client
+    .from("api_keys")
+    .select()
+    // Zappion: keys are stored hashed; RLS only shows a live key.
+    .eq("key_hash", await hashApiKey(token))
+    .maybeSingle();
+
+  if (apiKeyError || !apiKey) {
+    log.error("Invalid API key", apiKeyError);
+
+    throw new HTTPException(401, {
+      message: "Invalid API key",
+      cause: apiKeyError,
+    });
+  }
+
+  c.set("apiKey", apiKey);
+  c.set("supabase", client);
+
+  await next();
+
+  return;
+});
+
+// Templates routes
+
+app.put(
+  "/whatsapp-management/templates",
+  requireRoles(["member", "admin", "owner"]),
+  async (c) => {
+    const { organization_id, organization_address, template } = await c.req
+      .json<TemplatePayload>();
+
+    const client = c.get("supabase");
+
+    // fetch
+    if (template) {
+      const templateDetails = await fetchTemplate(
+        client,
+        organization_id,
+        organization_address,
+        template,
+      );
+
+      return c.json(templateDetails);
+    }
+
+    // list
+    const templates = await listTemplates(
+      client,
+      organization_id,
+      organization_address,
+    );
+
+    return c.json(templates);
+  },
+);
+
+app.post(
+  "/whatsapp-management/templates",
+  requireRoles(["admin", "owner"]),
+  async (c) => {
+    const { organization_id, organization_address, template } = await c.req
+      .json<TemplatePayload>();
+
+    const client = c.get("supabase");
+
+    const response = await createTemplate(
+      client,
+      organization_id,
+      organization_address,
+      template!,
+    );
+
+    return c.json(response);
+  },
+);
+
+app.patch(
+  "/whatsapp-management/templates",
+  requireRoles(["admin", "owner"]),
+  async (c) => {
+    const { organization_id, organization_address, template } = await c.req
+      .json<TemplatePayload>();
+
+    const client = c.get("supabase");
+
+    const response = await editTemplate(
+      client,
+      organization_id,
+      organization_address,
+      template!,
+    );
+
+    return c.json(response);
+  },
+);
+
+app.delete(
+  "/whatsapp-management/templates",
+  requireRoles(["admin", "owner"]),
+  async (c) => {
+    const { organization_id, organization_address, template } = await c.req
+      .json<TemplatePayload>();
+
+    const client = c.get("supabase");
+
+    const response = await deleteTemplate(
+      client,
+      organization_id,
+      organization_address,
+      template!,
+    );
+
+    return c.json(response);
+  },
+);
+
+// Zappion: header media for template creation. multipart/form-data with
+// organization_address, format (IMAGE | VIDEO | DOCUMENT) and file;
+// organization_id goes in the query string, where requireRoles reads it
+// without consuming the body.
+app.post(
+  "/whatsapp-management/template-media",
+  requireRoles(["admin", "owner"]),
+  async (c) => {
+    const organization_id = c.req.query("organization_id")!;
+    const form = await c.req.formData();
+    const organization_address = c.req.query("organization_address") ??
+      form.get("organization_address");
+    const format = form.get("format");
+    const file = form.get("file");
+
+    if (
+      typeof organization_address !== "string" || typeof format !== "string" ||
+      !(file instanceof File)
+    ) {
+      throw new HTTPException(400, {
+        message: "organization_address, format and file are required",
+      });
+    }
+
+    const response = await uploadTemplateMedia(
+      c.get("supabase"),
+      organization_id,
+      organization_address,
+      format,
+      file,
+    );
+
+    return c.json(response);
+  },
+);
+
+// Embedded signup routes
+
+// agent_id makes the connection USER-SCOPED — the number becomes that
+// member's personal channel instead of the org's shared inbox, and any
+// member may connect their own (see requireScope). Absent connects the
+// org's, admin+.
+app.post(
+  "/whatsapp-management/signup",
+  requireRoles(["member", "admin", "owner"]),
+  async (c) => {
+    const payload = await c.req.json<SignupPayload>();
+    log.info("Embedded signup payload", payload);
+
+    await requireScope(
+      c,
+      payload.organization_id,
+      payload.agent_id,
+      requireRoles(["admin", "owner"]),
+    );
+
+    // Once the user has been authorized, use the unsecure client to
+    // avoid row-level security.
+    // Users are not allowed to modify organizations_addresses table.
+    const unsecureClient = createUnsecureClient();
+
+    try {
+      const address = await performEmbeddedSignup(unsecureClient, payload);
+
+      log.info("Signup completed", {
+        organization_id: payload.organization_id,
+        address: address.address,
+      });
+
+      return c.json(address);
+    } catch (error) {
+      if (error instanceof HTTPException) {
+        log.error(error.message, error);
+
+        await unsecureClient
+          .from("logs")
+          .insert({
+            organization_id: payload.organization_id,
+            category: "signup",
+            service: "whatsapp",
+            level: "error",
+            message: error.message,
+            metadata: error.cause as Json,
+          })
+          .throwOnError();
+      } else {
+        log.error("Embedded signup failed", error);
+      }
+
+      throw error;
+    }
+  },
+);
+
+// Zappion: connect a number with credentials typed in (phone number id,
+// WABA id, permanent token) instead of Embedded Signup. Admin+, org-wide.
+app.post(
+  "/whatsapp-management/manual-connect",
+  requireRoles(["admin", "owner"]),
+  async (c) => {
+    const payload = await c.req.json<ManualConnectPayload>();
+    // Users cannot write organizations_addresses; the role check above is
+    // the authorization.
+    const address = await performManualConnect(
+      createUnsecureClient(),
+      payload,
+    );
+    return c.json(address);
+  },
+);
+
+// Zappion: the organization's own Meta App. Admin+ signed-in users only; an
+// API key never reads or replaces the App's credentials.
+const signedInUser = async (c: Context<AppEnv>, next: Next) => {
+  if (!c.get("user")) {
+    throw new HTTPException(403, {
+      message: "Sign in to manage the organization's Meta App",
+    });
+  }
+  await next();
+};
+
+app.get(
+  "/whatsapp-management/app",
+  signedInUser,
+  requireRoles(["admin", "owner"]),
+  async (c) => c.json(await getMetaApp(c.req.query("organization_id")!)),
+);
+
+app.put(
+  "/whatsapp-management/app",
+  signedInUser,
+  requireRoles(["admin", "owner"]),
+  async (c) => c.json(await saveMetaApp(await c.req.json<MetaAppPayload>())),
+);
+
+app.post(
+  "/whatsapp-management/app/test",
+  signedInUser,
+  requireRoles(["admin", "owner"]),
+  async (c) => {
+    const { organization_id } = await c.req.json<{ organization_id: string }>();
+    return c.json(await testMetaApp(organization_id));
+  },
+);
+
+app.post(
+  "/whatsapp-management/app/webhook",
+  signedInUser,
+  requireRoles(["admin", "owner"]),
+  async (c) => {
+    const { organization_id } = await c.req.json<{ organization_id: string }>();
+    return c.json(await configureMetaAppWebhook(organization_id));
+  },
+);
+
+app.delete(
+  "/whatsapp-management/app",
+  signedInUser,
+  requireRoles(["admin", "owner"]),
+  async (c) => {
+    await deleteMetaApp(c.req.query("organization_id")!);
+    return c.body(null, 204);
+  },
+);
+
+// Whoever may launch the signup may report how its popup ended.
+app.post(
+  "/whatsapp-management/signup/events",
+  requireRoles(["member", "admin", "owner"]),
+  async (c) => {
+    const payload = await c.req.json<SignupPopupEvent>();
+
+    await recordSignupPopupEvent(createUnsecureClient(), payload);
+
+    return c.body(null, 204);
+  },
+);
+
+app.delete(
+  "/whatsapp-management/signup",
+  // A member disconnects their own user-scoped number; admin+ any.
+  requireRoles(["member", "admin", "owner"]),
+  async (c) => {
+    const payload = await c.req.json<{
+      phone_number_id: string;
+      organization_id: string;
+    }>();
+    log.info("Embedded signup delete payload", payload);
+
+    if (
+      !await ownsAddress(
+        c,
+        payload.organization_id,
+        "whatsapp",
+        payload.phone_number_id,
+      )
+    ) {
+      await requireRoles(["admin", "owner"])(c, () => Promise.resolve());
+    }
+
+    // Once the user has been authorized, use the unsecure client to
+    // avoid row-level security.
+    // Users are not allowed to modify organizations_addresses table.
+    const unsecureClient = createUnsecureClient();
+
+    const address = await deleteSignup(
+      unsecureClient,
+      payload,
+    );
+
+    return c.json(address);
+  },
+);
+
+// Public onboard routes (no auth required, token-based)
+
+app.get("/whatsapp-management/onboard", async (c) => {
+  const token = c.req.query("token");
+
+  if (!token) {
+    throw new HTTPException(400, { message: "Missing 'token' query param" });
+  }
+
+  const client = createUnsecureClient();
+
+  const { data, error } = await client
+    .from("onboarding_tokens")
+    .select("id, organization_id, organizations(name)")
+    .eq("id", token)
+    .eq("service", "whatsapp")
+    .eq("status", "active")
+    .gt("expires_at", new Date().toISOString())
+    .maybeSingle();
+
+  if (error || !data) {
+    return c.json({ valid: false });
+  }
+
+  return c.json({
+    valid: true,
+    organization_name: data.organizations?.name,
+  });
+});
+
+app.post("/whatsapp-management/onboard", async (c) => {
+  const body = await c.req.json<{
+    token: string;
+    code: string;
+    application_id?: string;
+    phone_number_id?: string;
+    waba_id?: string;
+    business_id?: string;
+    flow_type?: "only_waba" | "new_phone_number" | "existing_phone_number";
+  }>();
+
+  if (!body.token) {
+    throw new HTTPException(400, { message: "Missing 'token' body param" });
+  }
+
+  log.info("Public onboard payload", body);
+
+  const client = createUnsecureClient();
+
+  // Read the token once and validate it in code — don't consume it; the link is
+  // marked used only after the account connects (below). A single read also lets
+  // us log exactly why a token was rejected when an onboard link "was used" but
+  // nothing happened on our side.
+  const { data: tokenData, error: tokenError } = await client
+    .from("onboarding_tokens")
+    .select(
+      "status, service, expires_at, organization_id, callback_url, verify_token",
+    )
+    .eq("id", body.token)
+    .maybeSingle();
+
+  const reason = tokenError
+    ? `db error: ${tokenError.message}`
+    : !tokenData
+    ? "token not found"
+    : tokenData.service !== "whatsapp"
+    ? `service mismatch (token is '${tokenData.service}')`
+    : tokenData.status !== "active"
+    ? `not active (status '${tokenData.status}')`
+    : new Date(tokenData.expires_at) <= new Date()
+    ? `expired at ${tokenData.expires_at}`
+    : null;
+
+  if (reason || !tokenData) {
+    log.warn("Onboard token rejected", {
+      token: body.token,
+      reason,
+      organization_id: tokenData?.organization_id,
+    });
+
+    throw new HTTPException(400, {
+      message: "Invalid or expired onboarding token",
+    });
+  }
+
+  log.info("Onboard token validated", {
+    token: body.token,
+    organization_id: tokenData.organization_id,
+  });
+
+  const payload: SignupPayload = {
+    code: body.code,
+    application_id: body.application_id,
+    organization_id: tokenData.organization_id,
+    phone_number_id: body.phone_number_id,
+    waba_id: body.waba_id,
+    business_id: body.business_id,
+    flow_type: body.flow_type,
+    callback_url: tokenData.callback_url ?? undefined,
+    verify_token: tokenData.verify_token ?? undefined,
+  };
+
+  // Connect the account, then mark the link used on success. Same try/catch as
+  // the authenticated /signup route: on failure record it (with the Meta cause)
+  // to public.logs so the org's tech-provider can self-debug a bad
+  // callback_url/verify_token — not just Zappion operators reading stdout. The
+  // token stays active on failure, so the customer can retry.
+  try {
+    const address = await performEmbeddedSignup(client, payload);
+
+    // Connected — mark the link used. This is the function's authoritative
+    // status write, derived from the actual onboarding outcome. The status guard
+    // keeps it idempotent under a double submit.
+    await client
+      .from("onboarding_tokens")
+      .update({ status: "used", used_at: new Date().toISOString() })
+      .eq("id", body.token)
+      .eq("status", "active");
+
+    log.info("Onboard completed", {
+      token: body.token,
+      organization_id: tokenData.organization_id,
+      address: address.address,
+    });
+
+    return c.json(address);
+  } catch (error) {
+    if (error instanceof HTTPException) {
+      log.error(error.message, error);
+      await client
+        .from("logs")
+        .insert({
+          organization_id: tokenData.organization_id,
+          category: "signup",
+          service: "whatsapp",
+          level: "error",
+          message: error.message,
+          metadata: error.cause as Json,
+        })
+        .throwOnError();
+    } else {
+      log.error("Embedded signup failed", error);
+    }
+
+    throw error;
+  }
+});
+
+// The onboard page's popup report, on the same token the page was opened with.
+app.post("/whatsapp-management/onboard/events", async (c) => {
+  const body = await c.req.json<
+    Omit<SignupPopupEvent, "organization_id"> & { token?: string }
+  >();
+
+  if (!body.token) {
+    throw new HTTPException(400, { message: "Missing 'token' body param" });
+  }
+
+  const client = createUnsecureClient();
+
+  const { data: tokenData } = await client
+    .from("onboarding_tokens")
+    .select("organization_id")
+    .eq("id", body.token)
+    .eq("service", "whatsapp")
+    .eq("status", "active")
+    .gt("expires_at", new Date().toISOString())
+    .maybeSingle();
+
+  if (!tokenData) {
+    throw new HTTPException(400, {
+      message: "Invalid or expired onboarding token",
+    });
+  }
+
+  await recordSignupPopupEvent(client, {
+    organization_id: tokenData.organization_id,
+    event: body.event,
+    data: body.data,
+  });
+
+  return c.body(null, 204);
+});
+
+Deno.serve(app.fetch);

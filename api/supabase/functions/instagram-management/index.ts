@@ -1,0 +1,452 @@
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { Hono } from "@hono/hono";
+import { cors } from "jsr:@hono/hono/cors";
+import { HTTPException } from "jsr:@hono/hono/http-exception";
+import * as log from "../_shared/logger.ts";
+import { Json } from "../_shared/db_types.ts";
+import {
+  createApiClient,
+  createClient,
+  createUnsecureClient,
+} from "../_shared/supabase.ts";
+import {
+  buildAuthorizeUrl,
+  deleteInstagramData,
+  disconnect,
+  type InstagramLoginPayload,
+  parseSignedRequest,
+  performInstagramLogin,
+  refreshTokens,
+} from "./login.ts";
+import {
+  type ManagementEnv,
+  ownsAddress,
+  requireRoles,
+  requireScope,
+} from "../_shared/management_auth.ts";
+import { hashApiKey } from "../_shared/zappion_api_keys.ts";
+import { isSecretKey } from "../_shared/zappion_keys.ts";
+
+// Routes that do not use the user/API-key auth middleware. Each has its own
+// auth: an onboarding token, the service-role key, or a signed_request HMAC.
+// `authorize-url` only composes the public OAuth URL (client_id + scopes + the
+// caller-supplied redirect_uri/state), so it is safe to leave open — the public
+// onboarding-link page needs it without a session.
+const PUBLIC_SUFFIXES = [
+  "/authorize-url",
+  "/onboard",
+  "/refresh-tokens",
+  "/deauthorize",
+  "/data-deletion",
+  "/data-deletion/status",
+];
+
+type AppEnv = ManagementEnv;
+
+const app = new Hono<AppEnv>();
+
+app.use("*", cors());
+
+// Surface thrown errors (and their `cause`) to the client and logs. Hono's
+// default handler only serializes an HTTPException's `message`, discarding the
+// `cause` where upstream details (e.g. the Graph API error) live.
+app.onError((err, c) => {
+  if (err instanceof HTTPException) {
+    log.error(
+      `${c.req.method} ${c.req.path} → ${err.status}: ${err.message}`,
+      err.cause,
+    );
+    return c.json(
+      { message: err.message, cause: err.cause as Json },
+      err.status,
+    );
+  }
+
+  log.error(`Unhandled error on ${c.req.method} ${c.req.path}`, err);
+  return c.json({ message: "Internal Server Error" }, 500);
+});
+
+// Validate user or API key (skipped for the public routes above).
+app.use("*", async (c, next) => {
+  if (PUBLIC_SUFFIXES.some((suffix) => c.req.path.endsWith(suffix))) {
+    await next();
+    return;
+  }
+
+  const token = c.req.header("Authorization")?.replace("Bearer ", "");
+
+  if (!token) {
+    throw new HTTPException(401, { message: "Missing authorization token" });
+  }
+
+  c.set("token", token);
+
+  // if token looks like JWT, try user
+  if (token.startsWith("eyJ")) {
+    const client = createClient(c.req.raw);
+
+    const { data: { user }, error: userError } = await client.auth.getUser();
+
+    if (userError || !user) {
+      log.error("Invalid JWT", userError);
+
+      throw new HTTPException(401, {
+        message: "Invalid JWT",
+        cause: userError,
+      });
+    }
+
+    c.set("user", user);
+    c.set("supabase", client);
+
+    await next();
+    return;
+  }
+
+  const client = createApiClient(c.req.raw);
+
+  const { data: apiKey, error: apiKeyError } = await client
+    .from("api_keys")
+    .select()
+    // Zappion: keys are stored hashed; RLS only shows a live key.
+    .eq("key_hash", await hashApiKey(token))
+    .maybeSingle();
+
+  if (apiKeyError || !apiKey) {
+    log.error("Invalid API key", apiKeyError);
+
+    throw new HTTPException(401, {
+      message: "Invalid API key",
+      cause: apiKeyError,
+    });
+  }
+
+  c.set("apiKey", apiKey);
+  c.set("supabase", client);
+
+  await next();
+});
+
+// Authorize URL helper — centralizes client_id + scopes for the frontend.
+app.get("/instagram-management/authorize-url", (c) => {
+  const redirect_uri = c.req.query("redirect_uri");
+  const state = c.req.query("state");
+  const application_id = c.req.query("application_id");
+
+  if (!redirect_uri) {
+    throw new HTTPException(400, {
+      message: "Missing 'redirect_uri' query param",
+    });
+  }
+
+  return c.json({
+    url: buildAuthorizeUrl(redirect_uri, state, application_id),
+  });
+});
+
+// Connect an account (in-app flow). agent_id makes the connection
+// USER-SCOPED — the account becomes that member's personal channel instead
+// of the org's shared inbox, and any member may connect their own (see
+// requireScope). Absent connects the org's, admin+.
+app.post(
+  "/instagram-management/signup",
+  requireRoles(["member", "admin", "owner"]),
+  async (c) => {
+    const payload = await c.req.json<InstagramLoginPayload>();
+    log.info("Instagram login payload", payload);
+
+    await requireScope(
+      c,
+      payload.organization_id,
+      payload.agent_id,
+      requireRoles(["admin", "owner"]),
+    );
+
+    // Users may not modify organizations_addresses directly; use the unsecure
+    // client now that the role check has passed.
+    const client = createUnsecureClient();
+
+    try {
+      const address = await performInstagramLogin(client, payload);
+
+      log.info("Signup completed", {
+        organization_id: payload.organization_id,
+        address: address.address,
+      });
+
+      return c.json(address);
+    } catch (error) {
+      if (error instanceof HTTPException) {
+        log.error(error.message, error);
+
+        await client
+          .from("logs")
+          .insert({
+            organization_id: payload.organization_id,
+            category: "login",
+            service: "instagram",
+            level: "error",
+            message: error.message,
+            metadata: error.cause as Json,
+          })
+          .throwOnError();
+      } else {
+        log.error("Instagram login failed", error);
+      }
+
+      throw error;
+    }
+  },
+);
+
+// Disconnect an account. A member disconnects their own user-scoped one;
+// admin+ any.
+app.delete(
+  "/instagram-management/signup",
+  requireRoles(["member", "admin", "owner"]),
+  async (c) => {
+    const payload = await c.req.json<
+      { organization_id: string; ig_user_id: string }
+    >();
+    log.info("Instagram disconnect payload", payload);
+
+    if (
+      !await ownsAddress(
+        c,
+        payload.organization_id,
+        "instagram",
+        payload.ig_user_id,
+      )
+    ) {
+      await requireRoles(["admin", "owner"])(c, () => Promise.resolve());
+    }
+
+    const client = createUnsecureClient();
+
+    const address = await disconnect(client, payload);
+
+    return c.json(address);
+  },
+);
+
+// Public onboard routes (token-based, no auth header).
+
+app.get("/instagram-management/onboard", async (c) => {
+  const token = c.req.query("token");
+
+  if (!token) {
+    throw new HTTPException(400, { message: "Missing 'token' query param" });
+  }
+
+  const client = createUnsecureClient();
+
+  const { data, error } = await client
+    .from("onboarding_tokens")
+    .select("id, organization_id, organizations(name)")
+    .eq("id", token)
+    .eq("service", "instagram")
+    .eq("status", "active")
+    .gt("expires_at", new Date().toISOString())
+    .maybeSingle();
+
+  if (error || !data) {
+    return c.json({ valid: false });
+  }
+
+  return c.json({
+    valid: true,
+    organization_name: data.organizations?.name,
+  });
+});
+
+app.post("/instagram-management/onboard", async (c) => {
+  const body = await c.req.json<
+    {
+      token: string;
+      code: string;
+      redirect_uri: string;
+      application_id?: string;
+    }
+  >();
+
+  if (!body.token) {
+    throw new HTTPException(400, { message: "Missing 'token' body param" });
+  }
+
+  log.info("Public Instagram onboard payload", body);
+
+  const client = createUnsecureClient();
+
+  // Read the token once and validate it in code — don't consume it; the link is
+  // marked used only after the account connects (below). A single read also lets
+  // us log exactly why a token was rejected when an onboard link "was used" but
+  // nothing happened on our side.
+  const { data: tokenData, error: tokenError } = await client
+    .from("onboarding_tokens")
+    .select("status, service, expires_at, organization_id")
+    .eq("id", body.token)
+    .maybeSingle();
+
+  const reason = tokenError
+    ? `db error: ${tokenError.message}`
+    : !tokenData
+    ? "token not found"
+    : tokenData.service !== "instagram"
+    ? `service mismatch (token is '${tokenData.service}')`
+    : tokenData.status !== "active"
+    ? `not active (status '${tokenData.status}')`
+    : new Date(tokenData.expires_at) <= new Date()
+    ? `expired at ${tokenData.expires_at}`
+    : null;
+
+  if (reason || !tokenData) {
+    log.warn("Onboard token rejected", {
+      token: body.token,
+      reason,
+      organization_id: tokenData?.organization_id,
+    });
+
+    throw new HTTPException(400, {
+      message: "Invalid or expired onboarding token",
+    });
+  }
+
+  log.info("Onboard token validated", {
+    token: body.token,
+    organization_id: tokenData.organization_id,
+  });
+
+  const payload: InstagramLoginPayload = {
+    code: body.code,
+    redirect_uri: body.redirect_uri,
+    organization_id: tokenData.organization_id,
+    application_id: body.application_id,
+  };
+
+  // Connect the account, then mark the link used on success. Same try/catch as
+  // the authenticated /signup route: on failure record it (with the Meta cause)
+  // to public.logs so the org's tech-provider can self-debug a bad
+  // callback/redirect — not just Zappion operators reading stdout. The token
+  // stays active on failure, so the customer can retry.
+  try {
+    const address = await performInstagramLogin(client, payload);
+
+    // Connected — mark the link used. This is the function's authoritative
+    // status write, derived from the actual onboarding outcome. The status guard
+    // keeps it idempotent under a double submit.
+    await client
+      .from("onboarding_tokens")
+      .update({ status: "used", used_at: new Date().toISOString() })
+      .eq("id", body.token)
+      .eq("status", "active");
+
+    log.info("Onboard completed", {
+      token: body.token,
+      organization_id: tokenData.organization_id,
+      address: address.address,
+    });
+
+    return c.json(address);
+  } catch (error) {
+    if (error instanceof HTTPException) {
+      log.error(error.message, error);
+      await client
+        .from("logs")
+        .insert({
+          organization_id: tokenData.organization_id,
+          category: "login",
+          service: "instagram",
+          level: "error",
+          message: error.message,
+          metadata: error.cause as Json,
+        })
+        .throwOnError();
+    } else {
+      log.error("Instagram login failed", error);
+    }
+
+    throw error;
+  }
+});
+
+// Token refresh (invoked by the daily cron with the service-role key).
+app.post("/instagram-management/refresh-tokens", async (c) => {
+  const token = c.req.header("Authorization")?.replace("Bearer ", "");
+
+  if (!isSecretKey(token)) {
+    throw new HTTPException(401, { message: "Unauthorized" });
+  }
+
+  const client = createUnsecureClient();
+  const summary = await refreshTokens(client);
+
+  return c.json(summary);
+});
+
+// Meta compliance callbacks (authenticated via signed_request HMAC).
+
+app.post("/instagram-management/deauthorize", async (c) => {
+  const body = await c.req.parseBody();
+  const signedRequest = body["signed_request"];
+
+  if (typeof signedRequest !== "string") {
+    throw new HTTPException(400, { message: "Missing 'signed_request'" });
+  }
+
+  const payload = await parseSignedRequest(signedRequest);
+
+  if (!payload?.user_id) {
+    throw new HTTPException(400, { message: "Invalid signed_request" });
+  }
+
+  log.info("Instagram deauthorize", { user_id: payload.user_id });
+
+  const client = createUnsecureClient();
+
+  await client
+    .from("organizations_addresses")
+    .update({ status: "disconnected" })
+    .eq("address", payload.user_id)
+    .eq("service", "instagram");
+
+  return c.json({ success: true });
+});
+
+app.post("/instagram-management/data-deletion", async (c) => {
+  const body = await c.req.parseBody();
+  const signedRequest = body["signed_request"];
+
+  if (typeof signedRequest !== "string") {
+    throw new HTTPException(400, { message: "Missing 'signed_request'" });
+  }
+
+  const payload = await parseSignedRequest(signedRequest);
+
+  if (!payload?.user_id) {
+    throw new HTTPException(400, { message: "Invalid signed_request" });
+  }
+
+  log.info("Instagram data deletion request", { user_id: payload.user_id });
+
+  const client = createUnsecureClient();
+  await deleteInstagramData(client, payload.user_id);
+
+  // Meta requires a JSON response with a status URL and a confirmation code.
+  const confirmation_code = crypto.randomUUID();
+  const origin = new URL(c.req.url).origin;
+  const url =
+    `${origin}/instagram-management/data-deletion/status?code=${confirmation_code}`;
+
+  return c.json({ url, confirmation_code });
+});
+
+app.get("/instagram-management/data-deletion/status", (c) => {
+  const code = c.req.query("code");
+
+  return c.json({
+    status: "Instagram data deletion request processed.",
+    confirmation_code: code,
+  });
+});
+
+Deno.serve(app.fetch);

@@ -1,0 +1,183 @@
+/* SPDX-License-Identifier: AGPL-3.0-only */
+/* Shared look of the Zappion MCP Apps screens. Host variables win; the
+   fallbacks follow the web app's light and dark themes. */
+:root {
+  --z-bg: var(--color-background-primary, #ffffff);
+  --z-bg-2: var(--color-background-secondary, #f0f2f5);
+  --z-text: var(--color-text-primary, #111b21);
+  --z-text-2: var(--color-text-secondary, #667781);
+  --z-border: var(--color-border-primary, #e9edef);
+  --z-danger: var(--color-text-danger, #d93025);
+  --z-success: var(--color-text-success, #008069);
+  --z-accent: #00a884;
+  --z-accent-text: #ffffff;
+  --z-chat: #efeae2;
+  --z-in: #ffffff;
+  --z-out: #d9fdd3;
+  --z-radius: var(--border-radius-lg, 10px);
+  --z-font: var(--font-sans, system-ui, -apple-system, "Segoe UI", sans-serif);
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  --z-bg: var(--color-background-primary, #111b21);
+  --z-bg-2: var(--color-background-secondary, #202c33);
+  --z-text: var(--color-text-primary, #e9edef);
+  --z-text-2: var(--color-text-secondary, #8696a0);
+  --z-border: var(--color-border-primary, #2a3942);
+  --z-chat: #0b141a;
+  --z-in: #202c33;
+  --z-out: #005c4b;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --z-bg: #111b21;
+    --z-bg-2: #202c33;
+    --z-text: #e9edef;
+    --z-text-2: #8696a0;
+    --z-border: #2a3942;
+    --z-chat: #0b141a;
+    --z-in: #202c33;
+    --z-out: #005c4b;
+    color-scheme: dark;
+  }
+}
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  background: var(--z-bg);
+  color: var(--z-text);
+  font: 14px/1.4 var(--z-font);
+}
+.app {
+  border: 1px solid var(--z-border);
+  border-radius: var(--z-radius);
+  overflow: hidden;
+  background: var(--z-bg);
+}
+.head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--z-bg-2);
+  border-bottom: 1px solid var(--z-border);
+}
+.avatar {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--z-accent);
+  color: var(--z-accent-text);
+  font-weight: 600;
+}
+.title {
+  min-width: 0;
+  flex: 1;
+}
+.title strong,
+.title span {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.title span,
+.muted {
+  color: var(--z-text-2);
+  font-size: 12px;
+}
+.pill {
+  flex: none;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+}
+.pill.open {
+  color: var(--z-success);
+}
+.pill.closed {
+  color: var(--z-text-2);
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+button {
+  cursor: pointer;
+  border: 0;
+  border-radius: 999px;
+  padding: 7px 14px;
+  background: var(--z-accent);
+  color: var(--z-accent-text);
+  font-weight: 600;
+}
+button.ghost {
+  background: transparent;
+  color: var(--z-text-2);
+  padding: 6px 8px;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--z-border);
+  border-radius: 8px;
+  background: var(--z-bg);
+}
+.notice {
+  padding: 8px 12px;
+  font-size: 13px;
+  border-top: 1px solid var(--z-border);
+}
+.notice.error {
+  color: var(--z-danger);
+}
+.notice.ok {
+  color: var(--z-success);
+}
+.empty {
+  padding: 24px 12px;
+  text-align: center;
+  color: var(--z-text-2);
+}
+.bubble {
+  max-width: 80%;
+  padding: 6px 8px 4px;
+  border-radius: 8px;
+  background: var(--z-in);
+  box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.bubble.out {
+  background: var(--z-out);
+  margin-left: auto;
+}
+.bubble .meta {
+  float: right;
+  margin: 4px 0 0 10px;
+  font-size: 11px;
+  color: var(--z-text-2);
+}
+.bubble .tag {
+  display: block;
+  font-size: 12px;
+  color: var(--z-text-2);
+  font-style: italic;
+}

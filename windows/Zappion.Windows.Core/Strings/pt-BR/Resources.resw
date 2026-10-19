@@ -1,0 +1,1340 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <data name="ProductName" xml:space="preserve">
+    <value>Zappion</value>
+  </data>
+  <data name="Unread" xml:space="preserve">
+    <value>Não lidas</value>
+  </data>
+  <data name="Retry" xml:space="preserve">
+    <value>Tentar novamente</value>
+  </data>
+  <data name="Reconnecting" xml:space="preserve">
+    <value>Reconectando…</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Não foi possível continuar</value>
+  </data>
+  <data name="ChatError" xml:space="preserve">
+    <value>Erro na conversa</value>
+  </data>
+  <data name="NoOrganization" xml:space="preserve">
+    <value>Esta conta não tem uma organização</value>
+  </data>
+  <data name="CredentialsRequired" xml:space="preserve">
+    <value>Informe seu e-mail e sua senha.</value>
+  </data>
+  <data name="AuthError" xml:space="preserve">
+    <value>Falha ao entrar ou atualizar a sessão. Confira suas credenciais e conexão e tente novamente.</value>
+  </data>
+  <data name="WorkspaceError" xml:space="preserve">
+    <value>Não foi possível carregar seu espaço de trabalho. Confira sua conexão e acesso e tente novamente.</value>
+  </data>
+  <data name="ConfigError" xml:space="preserve">
+    <value>appsettings.local.json contém JSON inválido. Corrija o arquivo e reinicie o Zappion.</value>
+  </data>
+  <data name="LoadError" xml:space="preserve">
+    <value>Não foi possível carregar as mensagens. Confira sua conexão e atualize.</value>
+  </data>
+  <data name="SaveReadError" xml:space="preserve">
+    <value>Não foi possível salvar a última posição de leitura neste dispositivo.</value>
+  </data>
+  <data name="ReadError" xml:space="preserve">
+    <value>Não foi possível marcar a mensagem como lida. Atualize para tentar novamente.</value>
+  </data>
+  <data name="SendError" xml:space="preserve">
+    <value>Não foi possível enviar a mensagem. Seu texto foi mantido; confira sua conexão e tente novamente.</value>
+  </data>
+  <data name="RefreshError" xml:space="preserve">
+    <value>Não foi possível atualizar as conversas. Confira sua conexão e tente novamente.</value>
+  </data>
+  <data name="VoiceMessage" xml:space="preserve">
+    <value>Mensagem de voz</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Data</value>
+  </data>
+  <data name="sending" xml:space="preserve">
+    <value>Enviando</value>
+  </data>
+  <data name="sent" xml:space="preserve">
+    <value>Enviada</value>
+  </data>
+  <data name="delivered" xml:space="preserve">
+    <value>Entregue</value>
+  </data>
+  <data name="read" xml:space="preserve">
+    <value>Lida</value>
+  </data>
+  <data name="failed" xml:space="preserve">
+    <value>Falha ao enviar</value>
+  </data>
+  <data name="GenericError" xml:space="preserve">
+    <value>Ocorreu um erro. Confira sua conexão e tente novamente.</value>
+  </data>
+  <data name="Chats" xml:space="preserve">
+    <value>Conversas</value>
+  </data>
+  <data name="All" xml:space="preserve">
+    <value>Tudo</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Pesquisar ou começar uma nova conversa</value>
+  </data>
+  <data name="EmptyList" xml:space="preserve">
+    <value>Nenhuma conversa encontrada.</value>
+  </data>
+  <data name="SignOut" xml:space="preserve">
+    <value>Sair da conta</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Configurações</value>
+  </data>
+  <data name="Welcome" xml:space="preserve">
+    <value>Boas-vindas de volta</value>
+  </data>
+  <data name="SignInDescription" xml:space="preserve">
+    <value>Entre no seu espaço de trabalho no Zappion.</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>E-mail</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Senha</value>
+  </data>
+  <data name="SignIn" xml:space="preserve">
+    <value>Entrar</value>
+  </data>
+  <data name="OpenSource" xml:space="preserve">
+    <value>Atendimento de código aberto</value>
+  </data>
+  <data name="BrandHeadline" xml:space="preserve">
+    <value>Boas conversas. Cuidado em cada atendimento.</value>
+  </data>
+  <data name="BrandDescription" xml:space="preserve">
+    <value>Reúna sua equipe e dê um toque pessoal a cada conversa.</value>
+  </data>
+  <data name="SharedInbox" xml:space="preserve">
+    <value>Uma caixa de entrada. Toda a equipe.</value>
+  </data>
+  <data name="CustomerMessage" xml:space="preserve">
+    <value>Olá! Podem me ajudar a começar?</value>
+  </data>
+  <data name="TeamReply" xml:space="preserve">
+    <value>Claro. Estamos aqui para ajudar!</value>
+  </data>
+  <data name="OfficialApi" xml:space="preserve">
+    <value>Integrado à API oficial do WhatsApp Business</value>
+  </data>
+  <data name="EmptyDescription" xml:space="preserve">
+    <value>Atenda seus clientes pela API oficial. As conversas do celular (coexistência) e da API aparecem juntas aqui.</value>
+  </data>
+  <data name="ConnectedApi" xml:space="preserve">
+    <value>Conectado pela API oficial do WhatsApp Business</value>
+  </data>
+  <data name="TypeMessage" xml:space="preserve">
+    <value>Digite uma mensagem</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>Enviar</value>
+  </data>
+  <data name="Today" xml:space="preserve">
+    <value>Hoje</value>
+  </data>
+  <data name="Yesterday" xml:space="preserve">
+    <value>Ontem</value>
+  </data>
+  <data name="You" xml:space="preserve">
+    <value>Você</value>
+  </data>
+  <data name="Photo" xml:space="preserve">
+    <value>Foto</value>
+  </data>
+  <data name="Video" xml:space="preserve">
+    <value>Vídeo</value>
+  </data>
+  <data name="Sticker" xml:space="preserve">
+    <value>Figurinha</value>
+  </data>
+  <data name="Document" xml:space="preserve">
+    <value>Documento</value>
+  </data>
+  <data name="Template" xml:space="preserve">
+    <value>Modelo</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Localização</value>
+  </data>
+  <data name="Contact" xml:space="preserve">
+    <value>Contato</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>Mensagem</value>
+  </data>
+  <data name="ApiNotice" xml:space="preserve">
+    <value>Mensagens pela API oficial do WhatsApp Business. Respostas livres só nas 24 h após a última mensagem do cliente.</value>
+  </data>
+  <data name="Attach" xml:space="preserve">
+    <value>Anexar</value>
+  </data>
+  <data name="RecordAudio" xml:space="preserve">
+    <value>Gravar áudio</value>
+  </data>
+  <data name="Discard" xml:space="preserve">
+    <value>Descartar</value>
+  </data>
+  <data name="AddCaption" xml:space="preserve">
+    <value>Adicione uma legenda…</value>
+  </data>
+  <data name="SaveAs" xml:space="preserve">
+    <value>Salvar como…</value>
+  </data>
+  <data name="OpenDefault" xml:space="preserve">
+    <value>Abrir com o aplicativo padrão</value>
+  </data>
+  <data name="OpenMaps" xml:space="preserve">
+    <value>Abrir no mapa</value>
+  </data>
+  <data name="LoadingMedia" xml:space="preserve">
+    <value>Carregando mídia…</value>
+  </data>
+  <data name="LoadingAudio" xml:space="preserve">
+    <value>Carregando áudio…</value>
+  </data>
+  <data name="MediaUnavailable" xml:space="preserve">
+    <value>Mídia indisponível. Tente novamente após o processamento.</value>
+  </data>
+  <data name="FileTooLarge" xml:space="preserve">
+    <value>Arquivo muito grande ({0}). O limite é {1}.</value>
+  </data>
+  <data name="EmptyFile" xml:space="preserve">
+    <value>O arquivo está vazio.</value>
+  </data>
+  <data name="FileTooLargeCache" xml:space="preserve">
+    <value>O arquivo excede a capacidade do cache.</value>
+  </data>
+  <data name="PlayAudio" xml:space="preserve">
+    <value>Reproduzir áudio</value>
+  </data>
+  <data name="PauseAudio" xml:space="preserve">
+    <value>Pausar áudio</value>
+  </data>
+  <data name="SeekAudio" xml:space="preserve">
+    <value>Avançar áudio</value>
+  </data>
+  <data name="PlaybackSpeed" xml:space="preserve">
+    <value>Velocidade de reprodução</value>
+  </data>
+  <data name="PauseVideo" xml:space="preserve">
+    <value>Pausar vídeo</value>
+  </data>
+  <data name="SeekVideo" xml:space="preserve">
+    <value>Avançar vídeo</value>
+  </data>
+  <data name="PlayVideo" xml:space="preserve">
+    <value>Reproduzir vídeo</value>
+  </data>
+  <data name="AudioError" xml:space="preserve">
+    <value>Não foi possível reproduzir o áudio.</value>
+  </data>
+  <data name="MicrophoneDenied" xml:space="preserve">
+    <value>Acesso ao microfone negado. Permita o acesso de aplicativos da área de trabalho nas Configurações do Windows.</value>
+  </data>
+  <data name="RecordingError" xml:space="preserve">
+    <value>Não foi possível gravar. Verifique seu microfone e tente novamente.</value>
+  </data>
+  <data name="RecordingLimit" xml:space="preserve">
+    <value>A gravação atingiu o limite de tamanho.</value>
+  </data>
+  <data name="MicrophoneSettings" xml:space="preserve">
+    <value>Configurações do microfone</value>
+  </data>
+  <data name="WindowClosed" xml:space="preserve">
+    <value>Janela fechada</value>
+  </data>
+  <data name="WindowHours" xml:space="preserve">
+    <value>restam {0} h</value>
+  </data>
+  <data name="WindowMinutes" xml:space="preserve">
+    <value>restam {0} min</value>
+  </data>
+  <data name="WindowClosesAt" xml:space="preserve">
+    <value>A janela fecha em {0}</value>
+  </data>
+  <data name="WindowNoMessages" xml:space="preserve">
+    <value>Nenhuma mensagem recebida do cliente</value>
+  </data>
+  <data name="WindowReason" xml:space="preserve">
+    <value>Fora da janela de 24 h. Para iniciar ou retomar a conversa, envie um modelo aprovado.</value>
+  </data>
+  <data name="Templates" xml:space="preserve">
+    <value>Modelos</value>
+  </data>
+  <data name="SearchTemplates" xml:space="preserve">
+    <value>Buscar modelos aprovados</value>
+  </data>
+  <data name="LoadingTemplates" xml:space="preserve">
+    <value>Carregando modelos…</value>
+  </data>
+  <data name="NoTemplates" xml:space="preserve">
+    <value>Nenhum modelo aprovado</value>
+  </data>
+  <data name="SendTemplate" xml:space="preserve">
+    <value>Enviar modelo</value>
+  </data>
+  <data name="InvalidTemplateField" xml:space="preserve">
+    <value>Verifique {0}.</value>
+  </data>
+  <data name="VerificationCode" xml:space="preserve">
+    <value>Código de verificação</value>
+  </data>
+  <data name="OfferExpiration" xml:space="preserve">
+    <value>Oferta expira em</value>
+  </data>
+  <data name="ProductSections" xml:space="preserve">
+    <value>Seções: título | SKU1, SKU2</value>
+  </data>
+  <data name="HttpError" xml:space="preserve">
+    <value>Erro HTTP {0}</value>
+  </data>
+  <data name="Reply" xml:space="preserve">
+    <value>Responder</value>
+  </data>
+  <data name="React" xml:space="preserve">
+    <value>Reagir</value>
+  </data>
+  <data name="CopyText" xml:space="preserve">
+    <value>Copiar texto</value>
+  </data>
+  <data name="MessageInfo" xml:space="preserve">
+    <value>Dados da mensagem</value>
+  </data>
+  <data name="CancelReply" xml:space="preserve">
+    <value>Cancelar resposta</value>
+  </data>
+  <data name="ChooseMedia" xml:space="preserve">
+    <value>Escolher arquivo do cabeçalho</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Voltar</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Fechar</value>
+  </data>
+  <data name="TemplatePreview" xml:space="preserve">
+    <value>Prévia do WhatsApp · ilustrativa</value>
+  </data>
+  <data name="TemplateUnsupported" xml:space="preserve">
+    <value>Este modelo tem componentes não suportados. Gerencie-o no app web.</value>
+  </data>
+  <data name="RetryTemplates" xml:space="preserve">
+    <value>Tentar carregar modelos novamente</value>
+  </data>
+  <data name="VerificationMessage" xml:space="preserve">
+    <value>*{0}* é seu código de verificação.</value>
+  </data>
+  <data name="InvalidHeaderMedia" xml:space="preserve">
+    <value>Escolha uma imagem JPEG/PNG, vídeo ou PDF correspondente ao cabeçalho.</value>
+  </data>
+  <data name="accepted" xml:space="preserve">
+    <value>Aceita</value>
+  </data>
+  <data name="TemplateVariable" xml:space="preserve">
+    <value>Variável de {0} {{{{{1}}}}}</value>
+  </data>
+  <data name="TemplateHeader" xml:space="preserve">
+    <value>cabeçalho</value>
+  </data>
+  <data name="TemplateBody" xml:space="preserve">
+    <value>corpo</value>
+  </data>
+  <data name="Template_latitude" xml:space="preserve">
+    <value>Latitude (-90 a 90)</value>
+  </data>
+  <data name="Template_longitude" xml:space="preserve">
+    <value>Longitude (-180 a 180)</value>
+  </data>
+  <data name="Template_locationName" xml:space="preserve">
+    <value>Nome do local</value>
+  </data>
+  <data name="Template_address" xml:space="preserve">
+    <value>Endereço</value>
+  </data>
+  <data name="Template_catalogId" xml:space="preserve">
+    <value>ID do catálogo</value>
+  </data>
+  <data name="Template_productId" xml:space="preserve">
+    <value>ID do produto (SKU)</value>
+  </data>
+  <data name="MyProfile" xml:space="preserve">
+    <value>Meu perfil</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Perfil</value>
+  </data>
+  <data name="Preferences" xml:space="preserve">
+    <value>Preferências</value>
+  </data>
+  <data name="Archived" xml:space="preserve">
+    <value>Arquivadas</value>
+  </data>
+  <data name="Archive" xml:space="preserve">
+    <value>Arquivar conversa</value>
+  </data>
+  <data name="Unarchive" xml:space="preserve">
+    <value>Desarquivar conversa</value>
+  </data>
+  <data name="NoArchivedChats" xml:space="preserve">
+    <value>Nenhuma conversa arquivada.</value>
+  </data>
+  <data name="AllInstances" xml:space="preserve">
+    <value>Todas as instâncias</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Idioma</value>
+  </data>
+  <data name="Appearance" xml:space="preserve">
+    <value>Aparência</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>Tema</value>
+  </data>
+  <data name="Light" xml:space="preserve">
+    <value>Claro</value>
+  </data>
+  <data name="Dark" xml:space="preserve">
+    <value>Escuro</value>
+  </data>
+  <data name="System" xml:space="preserve">
+    <value>Sistema</value>
+  </data>
+  <data name="FontSize" xml:space="preserve">
+    <value>Tamanho da fonte</value>
+  </data>
+  <data name="Small" xml:space="preserve">
+    <value>Pequeno</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value>Padrão</value>
+  </data>
+  <data name="Large" xml:space="preserve">
+    <value>Grande</value>
+  </data>
+  <data name="FontPreview" xml:space="preserve">
+    <value>Assim suas mensagens aparecem neste tamanho.</value>
+  </data>
+  <data name="ChatBackground" xml:space="preserve">
+    <value>Fundo do chat</value>
+  </data>
+  <data name="ShowDrawings" xml:space="preserve">
+    <value>Mostrar desenhos no fundo</value>
+  </data>
+  <data name="HiHelp" xml:space="preserve">
+    <value>Olá! Como posso ajudar?</value>
+  </data>
+  <data name="LearnMore" xml:space="preserve">
+    <value>Quero saber mais, por favor.</value>
+  </data>
+  <data name="EnterToSend" xml:space="preserve">
+    <value>Enter envia a mensagem</value>
+  </data>
+  <data name="ShiftEnterHint" xml:space="preserve">
+    <value>Shift + Enter insere uma nova linha.</value>
+  </data>
+  <data name="CtrlEnterHint" xml:space="preserve">
+    <value>Enter insere uma nova linha. Ctrl + Enter ou ⌘ + Enter envia.</value>
+  </data>
+  <data name="Signature" xml:space="preserve">
+    <value>Assinatura</value>
+  </data>
+  <data name="SignMessages" xml:space="preserve">
+    <value>Assinar minhas mensagens</value>
+  </data>
+  <data name="SignatureName" xml:space="preserve">
+    <value>Nome na assinatura</value>
+  </data>
+  <data name="Notifications" xml:space="preserve">
+    <value>Notificações</value>
+  </data>
+  <data name="NotificationSound" xml:space="preserve">
+    <value>Som ao receber mensagem</value>
+  </data>
+  <data name="DesktopNotifications" xml:space="preserve">
+    <value>Notificações na área de trabalho</value>
+  </data>
+  <data name="DesktopHint" xml:space="preserve">
+    <value>Receba notificações quando estiver em outra aba ou janela.</value>
+  </data>
+  <data name="FlashTaskbar" xml:space="preserve">
+    <value>Piscar ícone na barra de tarefas</value>
+  </data>
+  <data name="FlashTaskbarHint" xml:space="preserve">
+    <value>Desligado, o ícone continua mostrando o contador de não lidas, mas não pisca.</value>
+  </data>
+  <data name="Test" xml:space="preserve">
+    <value>Testar</value>
+  </data>
+  <data name="ProfilePhoto" xml:space="preserve">
+    <value>Foto do perfil</value>
+  </data>
+  <data name="PhotoLimit" xml:space="preserve">
+    <value>PNG, JPG ou WebP · até 2 MB</value>
+  </data>
+  <data name="UploadPhoto" xml:space="preserve">
+    <value>Enviar foto</value>
+  </data>
+  <data name="ChangePhoto" xml:space="preserve">
+    <value>Trocar foto</value>
+  </data>
+  <data name="RemovePhoto" xml:space="preserve">
+    <value>Remover foto</value>
+  </data>
+  <data name="YourName" xml:space="preserve">
+    <value>Seu nome</value>
+  </data>
+  <data name="SaveName" xml:space="preserve">
+    <value>Salvar nome</value>
+  </data>
+  <data name="SearchMessages" xml:space="preserve">
+    <value>Pesquisar mensagens</value>
+  </data>
+  <data name="NoResults" xml:space="preserve">
+    <value>Nenhum resultado</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>Resultado anterior</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Próximo resultado</value>
+  </data>
+  <data name="default" xml:space="preserve">
+    <value>Padrão</value>
+  </data>
+  <data name="green" xml:space="preserve">
+    <value>Verde</value>
+  </data>
+  <data name="blue" xml:space="preserve">
+    <value>Azul</value>
+  </data>
+  <data name="lavender" xml:space="preserve">
+    <value>Lavanda</value>
+  </data>
+  <data name="rose" xml:space="preserve">
+    <value>Rosa</value>
+  </data>
+  <data name="sand" xml:space="preserve">
+    <value>Areia</value>
+  </data>
+  <data name="slate" xml:space="preserve">
+    <value>Cinza</value>
+  </data>
+  <data name="AudioSpeed" xml:space="preserve">
+    <value>Velocidade do áudio</value>
+  </data>
+  <data name="PreferencesSaveError" xml:space="preserve">
+    <value>Não foi possível salvar as preferências.</value>
+  </data>
+  <data name="ArchiveError" xml:space="preserve">
+    <value>Não foi possível atualizar as conversas arquivadas.</value>
+  </data>
+  <data name="OpenWebError" xml:space="preserve">
+    <value>Não foi possível abrir o aplicativo web.</value>
+  </data>
+  <data name="PhotoError" xml:space="preserve">
+    <value>Escolha uma imagem PNG, JPG ou WebP de até 2 MB.</value>
+  </data>
+  <data name="ProfileError" xml:space="preserve">
+    <value>Não foi possível atualizar seu perfil.</value>
+  </data>
+  <data name="Media" xml:space="preserve">
+    <value>Mídia</value>
+  </data>
+  <data name="ChatOptions" xml:space="preserve">
+    <value>Opções da conversa</value>
+  </data>
+  <data name="AudioRate1" xml:space="preserve">
+    <value>1×</value>
+  </data>
+  <data name="AudioRate15" xml:space="preserve">
+    <value>1.5×</value>
+  </data>
+  <data name="AudioRate2" xml:space="preserve">
+    <value>2×</value>
+  </data>
+  <data name="AllowDesktopNotifications" xml:space="preserve">
+    <value>Permita notificações para o Zappion nas Configurações do Windows.</value>
+  </data>
+  <data name="ProfileUpdated" xml:space="preserve">
+    <value>Perfil atualizado.</value>
+  </data>
+  <data name="FilterByInstance" xml:space="preserve"><value>Filtrar por instância</value></data>
+  <data name="Organization" xml:space="preserve"><value>Configurações da organização</value></data>
+  <data name="NewChat" xml:space="preserve"><value>Nova conversa</value></data>
+  <data name="SendVia" xml:space="preserve"><value>Enviar por</value></data>
+  <data name="ChooseInstance" xml:space="preserve"><value>Escolha uma instância</value></data>
+  <data name="NewChatInstance" xml:space="preserve"><value>Instância da nova conversa</value></data>
+  <data name="ConnectNumber" xml:space="preserve"><value>Conecte um número em Configurações → Instâncias para iniciar uma conversa.</value></data>
+  <data name="PhoneWithCountryCode" xml:space="preserve"><value>Número com DDI e DDD</value></data>
+  <data name="OpenChat" xml:space="preserve"><value>Abrir conversa</value></data>
+  <data name="NewChatFirstMessage" xml:space="preserve"><value>A primeira mensagem para quem ainda não escreveu precisa ser um </value></data>
+  <data name="ApprovedTemplate" xml:space="preserve"><value>modelo aprovado</value></data>
+  <data name="NewChatTestNotice" xml:space="preserve"><value>. Números de teste só entregam para destinatários cadastrados no painel da Meta.</value></data>
+  <data name="Settings_settingsPanel_integrations" xml:space="preserve"><value>Integrações</value></data>
+  <data name="Settings_settingsPanel_meta-app" xml:space="preserve"><value>App da Meta</value></data>
+  <data name="Settings_settingsPanel_organization" xml:space="preserve"><value>Organização</value></data>
+  <data name="Settings_settingsPanel_members" xml:space="preserve"><value>Membros</value></data>
+  <data name="Settings_settingsPanel_instances" xml:space="preserve"><value>Instâncias</value></data>
+  <data name="Settings_settingsPanel_settingsSections" xml:space="preserve"><value>Seções de configurações</value></data>
+  <data name="Settings_settingsPanel_yourMemberRoleAllowsYouToViewTheseSettings" xml:space="preserve"><value>Seu papel de membro permite apenas consultar estas configurações.</value></data>
+  <data name="Settings_settingsPanel_changesSaved" xml:space="preserve"><value>Alterações salvas.</value></data>
+  <data name="Settings_settingsPanel_organizationLogo" xml:space="preserve"><value>Logo da organização</value></data>
+  <data name="Settings_settingsPanel_changeLogo" xml:space="preserve"><value>Trocar logo</value></data>
+  <data name="Settings_settingsPanel_uploadLogo" xml:space="preserve"><value>Enviar logo</value></data>
+  <data name="Settings_settingsPanel_uploadOrganizationLogo" xml:space="preserve"><value>Enviar logo da organização</value></data>
+  <data name="Settings_settingsPanel_remove" xml:space="preserve"><value>Remover</value></data>
+  <data name="Settings_settingsPanel_organizationName" xml:space="preserve"><value>Nome da organização</value></data>
+  <data name="Settings_settingsPanel_loadingMembers" xml:space="preserve"><value>Carregando membros…</value></data>
+  <data name="Settings_settingsPanel_couldNotLoadMembers" xml:space="preserve"><value>Não foi possível carregar os membros. </value></data>
+  <data name="Settings_settingsPanel_you" xml:space="preserve"><value>(você)</value></data>
+  <data name="Settings_settingsPanel_onlyOwner" xml:space="preserve"><value> · único proprietário</value></data>
+  <data name="Settings_settingsPanel_promoteAnotherOwnerBeforeChangingThisRole" xml:space="preserve"><value>Promova outro proprietário antes de alterar este papel</value></data>
+  <data name="Settings_settingsPanel_theOrganizationMustHaveAnOwner" xml:space="preserve"><value>A organização precisa manter um proprietário</value></data>
+  <data name="Settings_settingsPanel_pendingInvitations" xml:space="preserve"><value>Convites pendentes</value></data>
+  <data name="Settings_settingsPanel_role" xml:space="preserve"><value>Papel</value></data>
+  <data name="Settings_settingsPanel_invitationRole" xml:space="preserve"><value>Papel do convite</value></data>
+  <data name="Settings_settingsPanel_createInvitation" xml:space="preserve"><value>Criar convite</value></data>
+  <data name="Settings_settingsPanel_afterYouCreateTheInvitationTheRecipientCanCreate" xml:space="preserve"><value>Após criar o convite, a pessoa pode criar uma conta com esse e-mail e aceitá-lo ao entrar.</value></data>
+  <data name="Settings_settingsPanel_loadingInvitations" xml:space="preserve"><value>Carregando convites…</value></data>
+  <data name="Settings_settingsPanel_couldNotLoadInvitations" xml:space="preserve"><value>Não foi possível carregar os convites. </value></data>
+  <data name="Settings_settingsPanel_noPendingInvitations" xml:space="preserve"><value>Nenhum convite pendente.</value></data>
+  <data name="Settings_settingsPanel_revoke" xml:space="preserve"><value>Revogar</value></data>
+  <data name="Settings_settingsPanel_couldNotRefreshInstancesTryAgain" xml:space="preserve"><value>Não foi possível atualizar as instâncias. Tente novamente.</value></data>
+  <data name="Settings_settingsPanel_searchInstances" xml:space="preserve"><value>Buscar instâncias</value></data>
+  <data name="Settings_settingsPanel_searchPlaceholder" xml:space="preserve"><value>Nome, telefone, WABA ou ID</value></data>
+  <data name="Settings_settingsPanel_status" xml:space="preserve"><value>Status</value></data>
+  <data name="Settings_settingsPanel_filterInstancesByStatus" xml:space="preserve"><value>Filtrar instâncias por status</value></data>
+  <data name="Settings_settingsPanel_allStatuses" xml:space="preserve"><value>Todos os status</value></data>
+  <data name="Settings_settingsPanel_connected" xml:space="preserve"><value>Conectado</value></data>
+  <data name="Settings_settingsPanel_disconnected" xml:space="preserve"><value>Desconectado</value></data>
+  <data name="Settings_settingsPanel_refreshing" xml:space="preserve"><value>Atualizando…</value></data>
+  <data name="Settings_settingsPanel_refreshInstances" xml:space="preserve"><value>Atualizar instâncias</value></data>
+  <data name="Settings_settingsPanel_instancesIntro" xml:space="preserve"><value>Gerencie os números do WhatsApp conectados ao seu espaço de trabalho.</value></data>
+  <data name="Settings_settingsPanel_emptyInstancesHint" xml:space="preserve"><value>Conecte um número do WhatsApp para começar a enviar e receber mensagens.</value></data>
+  <data name="Settings_settingsPanel_instanceDetails" xml:space="preserve"><value>Detalhes</value></data>
+  <data name="Settings_settingsPanel_instanceActions" xml:space="preserve"><value>Ações da instância</value></data>
+  <data name="Settings_settingsPanel_renameInstance" xml:space="preserve"><value>Renomear</value></data>
+  <data name="Settings_settingsPanel_copyPhoneNumberId" xml:space="preserve"><value>Copiar Phone number ID</value></data>
+  <data name="Settings_settingsPanel_copyWabaId" xml:space="preserve"><value>Copiar WABA ID</value></data>
+  <data name="Settings_settingsPanel_verifiedName" xml:space="preserve"><value>Nome verificado</value></data>
+  <data name="Settings_settingsPanel_noInstancesConnected" xml:space="preserve"><value>Nenhuma instância cadastrada.</value></data>
+  <data name="Settings_settingsPanel_noInstancesMatchThisSearchAndStatus" xml:space="preserve"><value>Nenhuma instância encontrada para esta busca e status.</value></data>
+  <data name="Settings_settingsPanel_couldNotLoadChatCounts" xml:space="preserve"><value>Não foi possível carregar a quantidade de conversas.</value></data>
+  <data name="Settings_settingsPanel_phoneNumber" xml:space="preserve"><value>Telefone</value></data>
+  <data name="Settings_settingsPanel_wabaId" xml:space="preserve"><value>WABA ID</value></data>
+  <data name="Settings_settingsPanel_notProvided" xml:space="preserve"><value>Não informado</value></data>
+  <data name="Settings_settingsPanel_phoneNumberId" xml:space="preserve"><value>Phone number ID</value></data>
+  <data name="Settings_settingsPanel_instanceName" xml:space="preserve"><value>Nome da instância</value></data>
+  <data name="Settings_settingsPanel_optionalName" xml:space="preserve"><value>Nome opcional</value></data>
+  <data name="Settings_settingsPanel_leaveBlankToUseTheVerifiedName" xml:space="preserve"><value>Deixe vazio para usar o nome verificado.</value></data>
+  <data name="Settings_profileSettings_chooseAPngJpgOrWebpImageUp" xml:space="preserve"><value>Escolha uma imagem PNG, JPG ou WebP de até 2 MB.</value></data>
+  <data name="Settings_profileSettings_profilePhoto" xml:space="preserve"><value>Foto do perfil</value></data>
+  <data name="Settings_profileSettings_pngJpgOrWebpUpTo2Mb" xml:space="preserve"><value>PNG, JPG ou WebP · até 2 MB</value></data>
+  <data name="Settings_profileSettings_changePhoto" xml:space="preserve"><value>Trocar foto</value></data>
+  <data name="Settings_profileSettings_uploadPhoto" xml:space="preserve"><value>Enviar foto</value></data>
+  <data name="Settings_profileSettings_uploadProfilePhoto" xml:space="preserve"><value>Enviar foto do perfil</value></data>
+  <data name="Settings_profileSettings_removePhoto" xml:space="preserve"><value>Remover foto</value></data>
+  <data name="Settings_profileSettings_yourName" xml:space="preserve"><value>Seu nome</value></data>
+  <data name="Settings_profileSettings_saving" xml:space="preserve"><value>Salvando…</value></data>
+  <data name="Settings_profileSettings_saveName" xml:space="preserve"><value>Salvar nome</value></data>
+  <data name="Settings_profileSettings_profileUpdated" xml:space="preserve"><value>Perfil atualizado.</value></data>
+  <data name="Settings_manualConnect_hidden" xml:space="preserve"><value>[oculto]</value></data>
+  <data name="Settings_manualConnect_connectionFailed" xml:space="preserve"><value>Não foi possível conectar o número. Confira as credenciais e tente novamente.</value></data>
+  <data name="Settings_manualConnect_enterAValidPhoneNumberIdUsingOnly" xml:space="preserve"><value>Informe um Phone number ID válido, somente com dígitos.</value></data>
+  <data name="Settings_manualConnect_enterAValidWabaIdUsingOnlyDigits" xml:space="preserve"><value>Informe um WABA ID válido, somente com dígitos.</value></data>
+  <data name="Settings_manualConnect_enterThePermanentAccessToken" xml:space="preserve"><value>Informe o token de acesso permanente.</value></data>
+  <data name="Settings_manualConnect_enterThe6DigitTwoStepVerificationPin" xml:space="preserve"><value>Informe o PIN de verificação em duas etapas com 6 dígitos.</value></data>
+  <data name="Settings_manualConnect_theInstanceNameMustBe100CharactersOr" xml:space="preserve"><value>O nome da instância deve ter até 100 caracteres.</value></data>
+  <data name="Settings_manualConnect_enterAValidHttpsCallbackUrlWithoutCredentials" xml:space="preserve"><value>Informe uma URL de callback HTTPS válida, sem credenciais.</value></data>
+  <data name="Settings_manualConnect_invalidOrExpiredTokenCheckThePermanentSystem" xml:space="preserve"><value>Token inválido ou expirado. Confira o token permanente do System User e entre novamente se a sessão expirou.</value></data>
+  <data name="Settings_manualConnect_incorrectPinCheckTheNumberS6Digit" xml:space="preserve"><value>PIN incorreto. Confira os 6 dígitos da verificação em duas etapas do número.</value></data>
+  <data name="Settings_manualConnect_theNumberDoesNotBelongToTheSpecified" xml:space="preserve"><value>O número não pertence à WABA informada. Confira o Phone number ID e o WABA ID no WhatsApp Manager.</value></data>
+  <data name="Settings_manualConnect_youMustBeAnAdministratorOrOwnerAnd" xml:space="preserve"><value>Você precisa ser administrador ou proprietário e o System User precisa ter acesso à WABA para conectar este número.</value></data>
+  <data name="Settings_manualConnect_couldNotConnectRightNowCheckYourConnection" xml:space="preserve"><value>Não foi possível conectar agora. Confira sua conexão e tente novamente.</value></data>
+  <data name="Settings_useSettings_owner" xml:space="preserve"><value>Proprietário</value></data>
+  <data name="Settings_useSettings_administrator" xml:space="preserve"><value>Administrador</value></data>
+  <data name="Settings_useSettings_member" xml:space="preserve"><value>Membro</value></data>
+  <data name="Settings_useSettings_managesMembersRolesInvitationsOrganizationAndInstances" xml:space="preserve"><value>Gerencia membros, papéis, convites, organização e instâncias.</value></data>
+  <data name="Settings_useSettings_editsTheOrganizationAndInstancesCannotManageMembers" xml:space="preserve"><value>Edita a organização e as instâncias; não gerencia membros ou convites.</value></data>
+  <data name="Settings_useSettings_viewsOrganizationDetailsMembersAndInstances" xml:space="preserve"><value>Consulta os dados da organização, membros e instâncias.</value></data>
+  <data name="Settings_useSettings_theOrganizationMustHaveAtLeastOneOwner" xml:space="preserve"><value>A organização precisa manter pelo menos um proprietário. Promova outro membro antes de continuar.</value></data>
+  <data name="Settings_useSettings_aRecordWithTheseDetailsAlreadyExistsCheck" xml:space="preserve"><value>Já existe um registro para esses dados. Confira os convites pendentes.</value></data>
+  <data name="Settings_useSettings_youDoNotHavePermissionForThisAction" xml:space="preserve"><value>Você não tem permissão para esta ação. Atualize a página para conferir seu papel.</value></data>
+  <data name="Settings_useSettings_thisInvitationIsNoLongerPendingOrBelongs" xml:space="preserve"><value>Este convite não está mais pendente ou pertence a outra conta. Atualize a página.</value></data>
+  <data name="Settings_useSettings_couldNotCompleteTheActionRefreshThePage" xml:space="preserve"><value>Não foi possível concluir a ação. Atualize a página e tente novamente.</value></data>
+  <data name="Settings_metaApp_title" xml:space="preserve"><value>App da Meta</value></data>
+  <data name="Settings_metaApp_emptyTitle" xml:space="preserve"><value>Conecte seu App da Meta</value></data>
+  <data name="Settings_metaApp_emptyDescription" xml:space="preserve"><value>Um App da Meta conecta sua organização à API oficial do WhatsApp e recebe eventos por um webhook. Conecte um App para gerenciar credenciais e o webhook aqui.</value></data>
+  <data name="Settings_metaApp_connected" xml:space="preserve"><value>Conectado</value></data>
+  <data name="Settings_metaApp_notConnected" xml:space="preserve"><value>Não conectado</value></data>
+  <data name="Settings_metaApp_setup" xml:space="preserve"><value>Configurar App da Meta</value></data>
+  <data name="Settings_metaApp_actions" xml:space="preserve"><value>Ações do App</value></data>
+  <data name="Settings_metaApp_set" xml:space="preserve"><value>Definido</value></data>
+  <data name="Settings_metaApp_missing" xml:space="preserve"><value>Ausente</value></data>
+  <data name="Settings_metaApp_notChecked" xml:space="preserve"><value>Não verificado</value></data>
+  <data name="Settings_metaApp_problem" xml:space="preserve"><value>Problema</value></data>
+  <data name="Settings_metaApp_connectionMethod" xml:space="preserve"><value>Método de conexão</value></data>
+  <data name="Settings_metaApp_credentials" xml:space="preserve"><value>Credenciais</value></data>
+  <data name="Settings_metaApp_edit" xml:space="preserve"><value>Editar</value></data>
+  <data name="Settings_metaApp_replace" xml:space="preserve"><value>Substituir</value></data>
+  <data name="Settings_metaApp_cancel" xml:space="preserve"><value>Cancelar</value></data>
+  <data name="Settings_metaApp_appIdHint" xml:space="preserve"><value>developers.facebook.com › Meus Apps › seu app › Configurações do app › Básico. Use o ID do App, não o ID do portfólio empresarial, WABA ou Página.</value></data>
+  <data name="Settings_metaApp_appSecretHint" xml:space="preserve"><value>Configurações do app › Básico › Segredo do App › Mostrar. Ao alterar o ID, informe o segredo correspondente.</value></data>
+  <data name="Settings_metaApp_systemTokenHint" xml:space="preserve"><value>Opcional. Configurações do negócio › Usuários › Usuários do sistema: gere um token para este App com as permissões whatsapp_business_management e whatsapp_business_messaging.</value></data>
+  <data name="Settings_metaApp_automatic" xml:space="preserve"><value>Automático (recomendado)</value></data>
+  <data name="Settings_metaApp_automaticHint" xml:space="preserve"><value>Registre a URL de callback deste servidor e assine os eventos necessários do WhatsApp na Meta.</value></data>
+  <data name="Settings_metaApp_configureManually" xml:space="preserve"><value>Configurar manualmente</value></data>
+  <data name="Settings_metaApp_testResults" xml:space="preserve"><value>Resultados do teste de conexão</value></data>
+  <data name="Settings_metaApp_lastTested" xml:space="preserve"><value>Último teste</value></data>
+  <data name="Settings_metaApp_no_public_url" xml:space="preserve"><value>O servidor ainda não tem um endereço público. Defina WEBHOOK_PUBLIC_URL em api/supabase/functions/.env (seu domínio ou a URL do ngrok em desenvolvimento) e reinicie as funções.</value></data>
+  <data name="Settings_metaApp_webhook_rejected" xml:space="preserve"><value>A Meta não conseguiu verificar a URL de callback. Confira se o endereço é público e está online (em desenvolvimento, se o ngrok está rodando) e tente novamente.</value></data>
+  <data name="Settings_metaApp_app_not_found" xml:space="preserve"><value>A Meta não encontrou um App com este ID. Use o ID do App em developers.facebook.com › Meus Apps › seu app › Configurações do app › Básico — não o ID do portfólio empresarial, da conta do WhatsApp (WABA) ou da Página.</value></data>
+  <data name="Settings_metaApp_app_secret_rejected" xml:space="preserve"><value>A Meta não aceitou este Segredo do App para este ID do App. Copie-o novamente em Configurações do app › Básico (clique em Mostrar).</value></data>
+  <data name="Settings_metaApp_token_invalid" xml:space="preserve"><value>O token de usuário do sistema é inválido ou expirou. Gere um novo em Configurações do negócio › Usuários › Usuários do sistema.</value></data>
+  <data name="Settings_metaApp_token_other_app" xml:space="preserve"><value>Este token de usuário do sistema foi gerado para outro App. Gere um token para este App.</value></data>
+  <data name="Settings_metaApp_token_missing_scopes" xml:space="preserve"><value>O token não tem as permissões whatsapp_business_management e whatsapp_business_messaging. Gere-o novamente com as duas.</value></data>
+  <data name="Settings_metaApp_meta_unavailable" xml:space="preserve"><value>Não foi possível acessar a Meta agora. Tente novamente em alguns minutos.</value></data>
+  <data name="Settings_metaApp_ownApp" xml:space="preserve"><value>Meu próprio App da Meta</value></data>
+  <data name="Settings_metaApp_bsp" xml:space="preserve"><value>Provedor parceiro (BSP)</value></data>
+  <data name="Settings_metaApp_comingSoon" xml:space="preserve"><value>Em breve</value></data>
+  <data name="Settings_metaApp_existing" xml:space="preserve"><value>Número já conectado</value></data>
+  <data name="Settings_metaApp_instances" xml:space="preserve"><value>Abrir Configurações › Instâncias</value></data>
+  <data name="Settings_metaApp_adminOnly" xml:space="preserve"><value>Um administrador gerencia o App da Meta.</value></data>
+  <data name="Settings_metaApp_appId" xml:space="preserve"><value>ID do App</value></data>
+  <data name="Settings_metaApp_appSecret" xml:space="preserve"><value>Segredo do App</value></data>
+  <data name="Settings_metaApp_systemToken" xml:space="preserve"><value>Token de usuário do sistema (opcional)</value></data>
+  <data name="Settings_metaApp_configured" xml:space="preserve"><value>Configurado ✓</value></data>
+  <data name="Settings_metaApp_keepSecret" xml:space="preserve"><value>Deixe em branco para manter o atual</value></data>
+  <data name="Settings_metaApp_save" xml:space="preserve"><value>Salvar App</value></data>
+  <data name="Settings_metaApp_saving" xml:space="preserve"><value>Salvando…</value></data>
+  <data name="Settings_metaApp_saved" xml:space="preserve"><value>App salvo.</value></data>
+  <data name="Settings_metaApp_removeToken" xml:space="preserve"><value>Remover token de usuário do sistema</value></data>
+  <data name="Settings_metaApp_configureWebhook" xml:space="preserve"><value>Configurar webhook automaticamente</value></data>
+  <data name="Settings_metaApp_configuringWebhook" xml:space="preserve"><value>Configurando webhook…</value></data>
+  <data name="Settings_metaApp_webhookConfigured" xml:space="preserve"><value>Webhook configurado na Meta ✓</value></data>
+  <data name="Settings_metaApp_manualWebhook" xml:space="preserve"><value>Ou configure manualmente no painel da Meta (App › WhatsApp › Configuração).</value></data>
+  <data name="Settings_metaApp_webhookResult" xml:space="preserve"><value>Webhook</value></data>
+  <data name="Settings_metaApp_webhookOtherAddress" xml:space="preserve"><value>Aponta para outro endereço:</value></data>
+  <data name="Settings_metaApp_webhookNotConfigured" xml:space="preserve"><value>Não configurado</value></data>
+  <data name="Settings_metaApp_webhookInactive" xml:space="preserve"><value>Inativo</value></data>
+  <data name="Settings_metaApp_missingWebhookFields" xml:space="preserve"><value>Campos do webhook ausentes:</value></data>
+  <data name="Settings_metaApp_callback" xml:space="preserve"><value>URL de callback</value></data>
+  <data name="Settings_metaApp_verifyToken" xml:space="preserve"><value>Token de verificação</value></data>
+  <data name="Settings_metaApp_show" xml:space="preserve"><value>Mostrar token de verificação</value></data>
+  <data name="Settings_metaApp_hide" xml:space="preserve"><value>Ocultar token de verificação</value></data>
+  <data name="Settings_metaApp_fields" xml:space="preserve"><value>Campos do webhook para assinar</value></data>
+  <data name="Settings_metaApp_test" xml:space="preserve"><value>Testar conexão</value></data>
+  <data name="Settings_metaApp_testing" xml:space="preserve"><value>Testando…</value></data>
+  <data name="Settings_metaApp_app" xml:space="preserve"><value>App</value></data>
+  <data name="Settings_metaApp_token" xml:space="preserve"><value>Token</value></data>
+  <data name="Settings_metaApp_ok" xml:space="preserve"><value>OK</value></data>
+  <data name="Settings_metaApp_expires" xml:space="preserve"><value>Expira em</value></data>
+  <data name="Settings_metaApp_never" xml:space="preserve"><value>nunca</value></data>
+  <data name="Settings_metaApp_notSet" xml:space="preserve"><value>não definido</value></data>
+  <data name="Settings_metaApp_disconnect" xml:space="preserve"><value>Desconectar App</value></data>
+  <data name="Settings_metaApp_disconnected" xml:space="preserve"><value>App desconectado.</value></data>
+  <data name="Settings_metaApp_confirmDisconnect" xml:space="preserve"><value>Desconectar este App? Números com tokens próprios continuam funcionando. Números que dependem do token do App vão parar até que um token seja definido novamente.</value></data>
+  <data name="Settings_metaApp_loading" xml:space="preserve"><value>Carregando App da Meta…</value></data>
+  <data name="Settings_metaApp_retry" xml:space="preserve"><value>Tentar novamente</value></data>
+  <data name="Settings_metaApp_tokenHint" xml:space="preserve"><value>Deixe em branco para usar o token do App da Meta da organização</value></data>
+  <data name="Settings_integrations_numbers" xml:space="preserve"><value>Números</value></data>
+  <data name="Settings_integrations_allNumbers" xml:space="preserve"><value>Todos os números</value></data>
+  <data name="Settings_integrations_selectedNumbers" xml:space="preserve"><value>Números selecionados</value></data>
+  <data name="Settings_integrations_noConnectedNumbers" xml:space="preserve"><value>Nenhum número de WhatsApp conectado.</value></data>
+  <data name="Settings_integrations_selectNumbersHint" xml:space="preserve"><value>Selecione um ou mais números conectados.</value></data>
+  <data name="Settings_integrations_adminOnly" xml:space="preserve"><value>Somente administradores e proprietários podem gerenciar integrações.</value></data>
+  <data name="Settings_integrations_mcp" xml:space="preserve"><value>MCP</value></data>
+  <data name="Settings_integrations_navigation" xml:space="preserve"><value>Tipos de integração</value></data>
+  <data name="Settings_integrations_apiIntro" xml:space="preserve"><value>Chaves da organização para seu código, bots e automações — também usadas pelo MCP.</value></data>
+  <data name="Settings_integrations_emptyKeysHint" xml:space="preserve"><value>Crie uma chave para conectar seu código ou um assistente de IA à Zappion.</value></data>
+  <data name="Settings_integrations_usingApi" xml:space="preserve"><value>Como usar a API</value></data>
+  <data name="Settings_integrations_baseUrl" xml:space="preserve"><value>URL base da API</value></data>
+  <data name="Settings_integrations_apiExample" xml:space="preserve"><value>Exemplo de requisição à API</value></data>
+  <data name="Settings_integrations_apiHint" xml:space="preserve"><value>Use os dois cabeçalhos na API REST e nas Edge Functions: a apikey pública e a api-key da organização.</value></data>
+  <data name="Settings_integrations_activity" xml:space="preserve"><value>Atividade</value></data>
+  <data name="Settings_integrations_activityIntro" xml:space="preserve"><value>Requisições recentes ao servidor MCP.</value></data>
+  <data name="Settings_integrations_allKeys" xml:space="preserve"><value>Todas as chaves</value></data>
+  <data name="Settings_integrations_allStatuses" xml:space="preserve"><value>Todos os status</value></data>
+  <data name="Settings_integrations_noFilteredCalls" xml:space="preserve"><value>Nenhuma chamada corresponde aos filtros.</value></data>
+  <data name="Settings_integrations_actions" xml:space="preserve"><value>Ações da chave</value></data>
+  <data name="Settings_integrations_chooseUseCase" xml:space="preserve"><value>Comece por um caso de uso</value></data>
+  <data name="Settings_integrations_useCaseIntro" xml:space="preserve"><value>Comece pelo seu caso de uso e ajuste as permissões e os limites.</value></data>
+  <data name="Settings_integrations_useUseCase" xml:space="preserve"><value>Usar</value></data>
+  <data name="Settings_integrations_readUseCase" xml:space="preserve"><value>Somente leitura</value></data>
+  <data name="Settings_integrations_readUseCaseHint" xml:space="preserve"><value>Painéis e relatórios</value></data>
+  <data name="Settings_integrations_sendUseCase" xml:space="preserve"><value>Enviar mensagens</value></data>
+  <data name="Settings_integrations_sendUseCaseHint" xml:space="preserve"><value>Bots e automações</value></data>
+  <data name="Settings_integrations_mcpUseCase" xml:space="preserve"><value>Agente de IA (MCP)</value></data>
+  <data name="Settings_integrations_mcpUseCaseHint" xml:space="preserve"><value>Claude, Cursor e outros assistentes de IA</value></data>
+  <data name="Settings_integrations_adminUseCase" xml:space="preserve"><value>Administração</value></data>
+  <data name="Settings_integrations_adminUseCaseHint" xml:space="preserve"><value>Gerenciamento completo da organização</value></data>
+  <data name="Settings_integrations_customUseCase" xml:space="preserve"><value>Personalizado</value></data>
+  <data name="Settings_integrations_customUseCaseHint" xml:space="preserve"><value>Escolha todas as permissões e os limites</value></data>
+  <data name="Settings_integrations_customName" xml:space="preserve"><value>Minha integração</value></data>
+  <data name="Settings_integrations_permissions" xml:space="preserve"><value>Permissões</value></data>
+  <data name="Settings_integrations_includes" xml:space="preserve"><value>Leitura ⊂ Envio ⊂ Administração — cada nível inclui o anterior.</value></data>
+  <data name="Settings_integrations_back" xml:space="preserve"><value>Voltar</value></data>
+  <data name="Settings_integrations_cancel" xml:space="preserve"><value>Cancelar</value></data>
+  <data name="Settings_integrations_close" xml:space="preserve"><value>Fechar</value></data>
+  <data name="Settings_integrations_configure" xml:space="preserve"><value>Configurar chave</value></data>
+  <data name="Settings_integrations_keyReady" xml:space="preserve"><value>Sua chave está pronta</value></data>
+  <data name="Settings_integrations_stepCreate" xml:space="preserve"><value>1. Crie uma chave</value></data>
+  <data name="Settings_integrations_stepPaste" xml:space="preserve"><value>2. Cole a configuração</value></data>
+  <data name="Settings_integrations_pasteHint" xml:space="preserve"><value>Escolha seu cliente e cole a configuração nele.</value></data>
+  <data name="Settings_integrations_oauthTitle" xml:space="preserve"><value>Conectando o aplicativo ChatGPT?</value></data>
+  <data name="Settings_integrations_intro" xml:space="preserve"><value>Conecte assistentes de IA e agentes de programação à Zappion com MCP.</value></data>
+  <data name="Settings_integrations_serverUrl" xml:space="preserve"><value>URL do servidor</value></data>
+  <data name="Settings_integrations_copy" xml:space="preserve"><value>Copiar</value></data>
+  <data name="Settings_integrations_copied" xml:space="preserve"><value>Copiado.</value></data>
+  <data name="Settings_integrations_copyError" xml:space="preserve"><value>Não foi possível copiar. Tente novamente.</value></data>
+  <data name="Settings_integrations_createKey" xml:space="preserve"><value>Criar uma chave</value></data>
+  <data name="Settings_integrations_creating" xml:space="preserve"><value>Criando…</value></data>
+  <data name="Settings_integrations_name" xml:space="preserve"><value>Nome</value></data>
+  <data name="Settings_integrations_scope" xml:space="preserve"><value>Permissão</value></data>
+  <data name="Settings_integrations_read" xml:space="preserve"><value>Leitura</value></data>
+  <data name="Settings_integrations_send" xml:space="preserve"><value>Envio</value></data>
+  <data name="Settings_integrations_admin" xml:space="preserve"><value>Administração</value></data>
+  <data name="Settings_integrations_readDescription" xml:space="preserve"><value>Listar e ler conversas, contatos, contas e modelos.</value></data>
+  <data name="Settings_integrations_sendDescription" xml:space="preserve"><value>Ler e enviar mensagens.</value></data>
+  <data name="Settings_integrations_adminDescription" xml:space="preserve"><value>Enviar e gerenciar a organização com as mesmas permissões de administrador disponíveis no restante da API.</value></data>
+  <data name="Settings_integrations_expiry" xml:space="preserve"><value>Validade</value></data>
+  <data name="Settings_integrations_never" xml:space="preserve"><value>Nunca</value></data>
+  <data name="Settings_integrations_days30" xml:space="preserve"><value>30 dias</value></data>
+  <data name="Settings_integrations_days90" xml:space="preserve"><value>90 dias</value></data>
+  <data name="Settings_integrations_year" xml:space="preserve"><value>1 ano</value></data>
+  <data name="Settings_integrations_messagesPerHour" xml:space="preserve"><value>Mensagens por hora</value></data>
+  <data name="Settings_integrations_templatesPerHour" xml:space="preserve"><value>Modelos por hora</value></data>
+  <data name="Settings_integrations_templateHint" xml:space="preserve"><value>A Meta cobra pelo envio de modelos.</value></data>
+  <data name="Settings_integrations_fullKey" xml:space="preserve"><value>Chave de API completa</value></data>
+  <data name="Settings_integrations_keyWarning" xml:space="preserve"><value>Copie esta chave agora. Você não poderá vê-la novamente.</value></data>
+  <data name="Settings_integrations_done" xml:space="preserve"><value>Concluir</value></data>
+  <data name="Settings_integrations_keys" xml:space="preserve"><value>Chaves de API</value></data>
+  <data name="Settings_integrations_noKeys" xml:space="preserve"><value>Nenhuma chave de API criada.</value></data>
+  <data name="Settings_integrations_active" xml:space="preserve"><value>Ativa</value></data>
+  <data name="Settings_integrations_expired" xml:space="preserve"><value>Expirada</value></data>
+  <data name="Settings_integrations_revoked" xml:space="preserve"><value>Revogada</value></data>
+  <data name="Settings_integrations_created" xml:space="preserve"><value>Criada em</value></data>
+  <data name="Settings_integrations_lastUsed" xml:space="preserve"><value>Último uso</value></data>
+  <data name="Settings_integrations_expires" xml:space="preserve"><value>Expira em</value></data>
+  <data name="Settings_integrations_revoke" xml:space="preserve"><value>Revogar</value></data>
+  <data name="Settings_integrations_revokeSuccess" xml:space="preserve"><value>Chave revogada.</value></data>
+  <data name="Settings_integrations_connectClient" xml:space="preserve"><value>Conectar um cliente</value></data>
+  <data name="Settings_integrations_snippet" xml:space="preserve"><value>Trecho de configuração</value></data>
+  <data name="Settings_integrations_nodeHint" xml:space="preserve"><value>O Claude Desktop precisa do Node.js para usar esta configuração.</value></data>
+  <data name="Settings_integrations_chatgptHint" xml:space="preserve"><value>Os conectores personalizados do aplicativo ChatGPT não podem enviar uma chave de API. Adicione apenas a URL e entre com sua conta Zappion (OAuth).</value></data>
+  <data name="Settings_integrations_noCalls" xml:space="preserve"><value>Nenhuma chamada MCP registrada.</value></data>
+  <data name="Settings_integrations_time" xml:space="preserve"><value>Horário</value></data>
+  <data name="Settings_integrations_keyName" xml:space="preserve"><value>Chave</value></data>
+  <data name="Settings_integrations_signedInUser" xml:space="preserve"><value>Usuário autenticado</value></data>
+  <data name="Settings_integrations_unknownKey" xml:space="preserve"><value>Chave desconhecida</value></data>
+  <data name="Settings_integrations_tool" xml:space="preserve"><value>Ferramenta</value></data>
+  <data name="Settings_integrations_contact" xml:space="preserve"><value>Contato</value></data>
+  <data name="Settings_integrations_status" xml:space="preserve"><value>Status</value></data>
+  <data name="Settings_integrations_pending" xml:space="preserve"><value>Pendente</value></data>
+  <data name="Settings_integrations_ok" xml:space="preserve"><value>OK</value></data>
+  <data name="Settings_integrations_callError" xml:space="preserve"><value>Erro</value></data>
+  <data name="Settings_integrations_denied" xml:space="preserve"><value>Negada</value></data>
+  <data name="Settings_integrations_rate_limited" xml:space="preserve"><value>Limite atingido</value></data>
+  <data name="Settings_integrations_limitsNote" xml:space="preserve"><value>Ao ultrapassar o limite por hora, a chave recebe o erro rate_limited com o horário em que poderá tentar novamente; revogar uma chave interrompe seu acesso imediatamente.</value></data>
+  <data name="Settings_integrations_loading" xml:space="preserve"><value>Carregando…</value></data>
+  <data name="Settings_integrations_retry" xml:space="preserve"><value>Tentar novamente</value></data>
+  <data name="Settings_integrations_delete" xml:space="preserve"><value>Excluir</value></data>
+  <data name="Settings_integrations_deletedKey" xml:space="preserve"><value>Chave excluída</value></data>
+  <data name="Settings_integrations_revokeDescription" xml:space="preserve"><value>Apps que usam esta chave param de funcionar imediatamente. Ela continua listada para manter seu nome no histórico de atividades.</value></data>
+  <data name="Settings_integrations_deleteDescription" xml:space="preserve"><value>Esta ação não pode ser desfeita. Apps que usam esta chave param de funcionar, e suas atividades anteriores serão exibidas como uma chave excluída.</value></data>
+  <data name="Settings_integrations_deleteSuccess" xml:space="preserve"><value>Chave excluída.</value></data>
+  <data name="Settings_connectNumber_phoneNumberId" xml:space="preserve"><value>Phone number ID</value></data>
+  <data name="Settings_connectNumber_wabaId" xml:space="preserve"><value>WhatsApp Business Account ID (WABA)</value></data>
+  <data name="Settings_connectNumber_verifyToken" xml:space="preserve"><value>Verify token</value></data>
+  <data name="Settings_connectNumber_couldNotConnectTheNumber" xml:space="preserve"><value>Não foi possível conectar o número.</value></data>
+  <data name="Settings_connectNumber_connectNumber" xml:space="preserve"><value>Conectar número</value></data>
+  <data name="Settings_connectNumber_numberConnected" xml:space="preserve"><value>Número conectado.</value></data>
+  <data name="Settings_connectNumber_howWouldYouLikeToConnectTheNumber" xml:space="preserve"><value>Como deseja conectar o número?</value></data>
+  <data name="Settings_connectNumber_manualCredentials" xml:space="preserve"><value>Manual (credenciais)</value></data>
+  <data name="Settings_connectNumber_cancel" xml:space="preserve"><value>Cancelar</value></data>
+  <data name="Settings_connectNumber_embeddedSignupRecommended" xml:space="preserve"><value>Embedded Signup (recomendado)</value></data>
+  <data name="Settings_connectNumber_newNumberConnectANumberToUseWithThe" xml:space="preserve"><value>Número novo: conecte um número para usar na API do WhatsApp.</value></data>
+  <data name="Settings_connectNumber_coexistenceConnectANumberAlreadyUsedInTheWhatsApp" xml:space="preserve"><value>Coexistência: conecte um número que já usa o app WhatsApp Business e continue usando o app junto com a API.</value></data>
+  <data name="Settings_connectNumber_openConnectionPage" xml:space="preserve"><value>Abrir página de conexão</value></data>
+  <data name="Settings_connectNumber_theListWillRefreshWhenYouReturnFromThe" xml:space="preserve"><value>Ao voltar do portal, a lista será recarregada. Você também pode usar “Atualizar instâncias”.</value></data>
+  <data name="Settings_connectNumber_forANumberCreatedDirectlyInMetaSWhatsApp" xml:space="preserve"><value>Para um número criado diretamente no WhatsApp Manager da Meta, com token permanente de System User.</value></data>
+  <data name="Settings_connectNumber_useCredentials" xml:space="preserve"><value>Usar credenciais</value></data>
+  <data name="Settings_connectNumber_instanceNameOptional" xml:space="preserve"><value>Nome da instância (opcional)</value></data>
+  <data name="Settings_connectNumber_chooseANameToIdentifyTheNumberInThis" xml:space="preserve"><value>Escolha um nome para identificar o número nesta organização.</value></data>
+  <data name="Settings_connectNumber_whatsAppManagerPhoneNumbersSelectTheNumberAndCopy" xml:space="preserve"><value>WhatsApp Manager › Números de telefone › selecione o número e copie seu ID.</value></data>
+  <data name="Settings_connectNumber_businessManagerBusinessSettingsAccountsWhatsAppAccountsCopyThe" xml:space="preserve"><value>Business Manager › Configurações do negócio › Contas › Contas do WhatsApp: copie o ID da conta.</value></data>
+  <data name="Settings_connectNumber_permanentAccessToken" xml:space="preserve"><value>Token de acesso permanente</value></data>
+  <data name="Settings_connectNumber_hideToken" xml:space="preserve"><value>Ocultar token</value></data>
+  <data name="Settings_connectNumber_showToken" xml:space="preserve"><value>Mostrar token</value></data>
+  <data name="Settings_connectNumber_businessManagerUsersSystemUsersGenerateAPermanentToken" xml:space="preserve"><value>Business Manager › Usuários › Usuários do sistema: gere um token permanente para o app, com acesso à WABA e permissões de gerenciamento e mensagens do WhatsApp.</value></data>
+  <data name="Settings_connectNumber_registerTheNumberWithTheCloudAPI" xml:space="preserve"><value>Registrar o número na Cloud API</value></data>
+  <data name="Settings_connectNumber_selectThisForNewNumbersThatStillNeedTo" xml:space="preserve"><value>Marque para números novos que ainda precisam ser registrados na Cloud API.</value></data>
+  <data name="Settings_connectNumber_twoStepVerificationPIN" xml:space="preserve"><value>PIN de verificação em duas etapas</value></data>
+  <data name="Settings_connectNumber_whatsAppManagerPhoneNumbersTwoStepVerificationUseThe" xml:space="preserve"><value>WhatsApp Manager › Números de telefone › Verificação em duas etapas: use o PIN de 6 dígitos do número.</value></data>
+  <data name="Settings_connectNumber_advancedFieldsOptional" xml:space="preserve"><value>Campos avançados (opcionais)</value></data>
+  <data name="Settings_connectNumber_fillTheseInOnlyToOverrideTheDefaultWebhook" xml:space="preserve"><value>Preencha somente para substituir a configuração de webhook padrão.</value></data>
+  <data name="Settings_connectNumber_callbackURL" xml:space="preserve"><value>URL de callback</value></data>
+  <data name="Settings_connectNumber_metaAppSettingsWhatsAppConfigurationWebhookYourReceiverS" xml:space="preserve"><value>Configuração do app na Meta › WhatsApp › Configuração › Webhook: URL HTTPS do seu receptor.</value></data>
+  <data name="Settings_connectNumber_useTheVerificationTokenConfiguredInYourReceiverAnd" xml:space="preserve"><value>Use o token de verificação definido no receptor e na configuração de Webhook do app na Meta.</value></data>
+  <data name="Settings_connectNumber_connecting" xml:space="preserve"><value>Conectando…</value></data>
+  <data name="Settings_connectNumber_connectWithCredentials" xml:space="preserve"><value>Conectar com credenciais</value></data>
+  <data name="Settings_connectNumber_backToConnectionMethods" xml:space="preserve"><value>Voltar aos métodos</value></data>
+  <data name="Settings_invitationInbox_welcome" xml:space="preserve"><value>Bem-vindo</value></data>
+  <data name="Settings_invitationInbox_noOrganization" xml:space="preserve"><value>Seu usuário não pertence a nenhuma organização. Aceite um convite para começar.</value></data>
+  <data name="Settings_invitationInbox_loadingInvitations" xml:space="preserve"><value>Carregando convites…</value></data>
+  <data name="Settings_invitationInbox_couldNotLoadInvitations" xml:space="preserve"><value>Não foi possível carregar os convites. </value></data>
+  <data name="Settings_invitationInbox_noPendingInvitationsForYourEmail" xml:space="preserve"><value>Nenhum convite pendente para seu e-mail.</value></data>
+  <data name="Settings_invitationInbox_organization" xml:space="preserve"><value>Organização</value></data>
+  <data name="Settings_invitationInbox_anOwner" xml:space="preserve"><value>um proprietário</value></data>
+  <data name="Settings_invitationInbox_accept" xml:space="preserve"><value>Aceitar</value></data>
+  <data name="Settings_invitationInbox_decline" xml:space="preserve"><value>Recusar</value></data>
+  <data name="Settings_invitationInbox_signOut" xml:space="preserve"><value>Sair</value></data>
+  <data name="Settings_login_productName" xml:space="preserve"><value>Zappion</value></data>
+  <data name="Settings_login_openSource" xml:space="preserve"><value>Atendimento de código aberto</value></data>
+  <data name="Settings_login_brandHeadline" xml:space="preserve"><value>Boas conversas. Cuidado em cada atendimento.</value></data>
+  <data name="Settings_login_brandDescription" xml:space="preserve"><value>Reúna sua equipe e dê um toque pessoal a cada conversa.</value></data>
+  <data name="Settings_login_sharedInbox" xml:space="preserve"><value>Uma caixa de entrada. Toda a equipe.</value></data>
+  <data name="Settings_login_customerMessage" xml:space="preserve"><value>Olá! Podem me ajudar a começar?</value></data>
+  <data name="Settings_login_teamReply" xml:space="preserve"><value>Claro. Estamos aqui para ajudar!</value></data>
+  <data name="Settings_login_officialApi" xml:space="preserve"><value>Integrado à API oficial do WhatsApp Business</value></data>
+  <data name="Settings_login_welcomeBack" xml:space="preserve"><value>Boas-vindas de volta</value></data>
+  <data name="Settings_login_signInDescription" xml:space="preserve"><value>Entre no seu espaço de trabalho no Zappion.</value></data>
+  <data name="Settings_login_createAccountDescription" xml:space="preserve"><value>Crie sua conta para aceitar o convite da sua equipe.</value></data>
+  <data name="Settings_login_email" xml:space="preserve"><value>E-mail</value></data>
+  <data name="Settings_login_password" xml:space="preserve"><value>Senha</value></data>
+  <data name="Settings_login_pleaseWait" xml:space="preserve"><value>Aguarde…</value></data>
+  <data name="Settings_login_alreadyHaveAnAccountSignIn" xml:space="preserve"><value>Já tenho conta · Entrar</value></data>
+  <data name="Settings_login_receivedAnInvitationCreateAccount" xml:space="preserve"><value>Recebeu um convite? Criar conta</value></data>
+  <data name="Settings_login_incorrectEmailOrPassword" xml:space="preserve"><value>E-mail ou senha incorretos.</value></data>
+  <data name="Settings_login_confirmYourEmailBeforeSigningIn" xml:space="preserve"><value>Confirme seu e-mail antes de entrar.</value></data>
+  <data name="Settings_login_anAccountWithThisEmailAlreadyExistsSign" xml:space="preserve"><value>Já existe uma conta com esse e-mail. Entre para aceitar o convite.</value></data>
+  <data name="Settings_login_chooseAStrongerPasswordWithAtLeast6" xml:space="preserve"><value>Escolha uma senha mais forte, com pelo menos 6 caracteres.</value></data>
+  <data name="Settings_login_waitAFewMinutesBeforeRequestingAnotherEmail" xml:space="preserve"><value>Aguarde alguns minutos antes de solicitar outro e-mail.</value></data>
+  <data name="Settings_login_tooManyAttemptsWaitAFewMinutesAnd" xml:space="preserve"><value>Muitas tentativas. Aguarde alguns minutos e tente novamente.</value></data>
+  <data name="Settings_login_enterAValidEmailAddress" xml:space="preserve"><value>Informe um e-mail válido.</value></data>
+  <data name="Settings_login_registrationIsDisabledContactYourOrganizationAdministrator" xml:space="preserve"><value>O cadastro está desativado. Entre em contato com o responsável pela organização.</value></data>
+  <data name="Settings_login_couldNotAccessYourAccountCheckYourDetails" xml:space="preserve"><value>Não foi possível acessar sua conta. Confira os dados e tente novamente.</value></data>
+  <data name="Settings_login_accountCreatedCheckYourEmailToConfirmYour" xml:space="preserve"><value>Conta criada. Confira seu e-mail para confirmar o cadastro e depois entre para aceitar seu convite.</value></data>
+  <data name="Settings_login_createAccount" xml:space="preserve"><value>Criar conta</value></data>
+  <data name="Settings_login_signIn" xml:space="preserve"><value>Entrar</value></data>
+  <data name="Settings_manualConnect_couldNotConnectTheNumber" xml:space="preserve"><value>Não foi possível conectar o número: {0}</value></data>
+  <data name="Settings_integrations_showRevoked" xml:space="preserve"><value>Mostrar revogadas ({0})</value></data>
+  <data name="Settings_integrations_hideRevoked" xml:space="preserve"><value>Ocultar revogadas ({0})</value></data>
+  <data name="Settings_settingsPanel_instancesCount" xml:space="preserve"><value>{0} instâncias · {1} conectadas</value></data>
+  <data name="Settings_settingsPanel_instanceOne" xml:space="preserve"><value>instância</value></data>
+  <data name="Settings_settingsPanel_instanceMany" xml:space="preserve"><value>instâncias</value></data>
+  <data name="Settings_settingsPanel_connectedOne" xml:space="preserve"><value>conectada</value></data>
+  <data name="Settings_settingsPanel_connectedMany" xml:space="preserve"><value>conectadas</value></data>
+  <data name="Settings_settingsPanel_removeFromTheOrganization" xml:space="preserve"><value>Remover {0} da organização?</value></data>
+  <data name="Templates_mediaLibrary_instance" xml:space="preserve"><value>Instância</value></data>
+  <data name="Templates_mediaLibrary_clearFilters" xml:space="preserve"><value>Limpar filtros</value></data>
+  <data name="Templates_mediaLibrary_image" xml:space="preserve"><value>Imagem</value></data>
+  <data name="Templates_messages_video" xml:space="preserve"><value>Vídeo</value></data>
+  <data name="Templates_messages_location" xml:space="preserve"><value>Localização</value></data>
+  <data name="Templates_pageHeader_back" xml:space="preserve"><value>Voltar</value></data>
+  <data name="Templates_preferences_language" xml:space="preserve"><value>Idioma</value></data>
+  <data name="Templates_home_tryAgain" xml:space="preserve"><value>Tentar novamente</value></data>
+  <data name="Templates_useChat_selectAWhatsappInstanceFirst" xml:space="preserve"><value>Selecione primeiro uma instância do WhatsApp</value></data>
+  <data name="Templates_useChat_FailedToLoadTemplates" xml:space="preserve"><value>Falha ao carregar os modelos ({status})</value></data>
+  <data name="Templates_useChat_FailedToCreateTemplate" xml:space="preserve"><value>Falha ao criar o modelo ({status})</value></data>
+  <data name="Templates_templatesManager_templates" xml:space="preserve"><value>Modelos</value></data>
+  <data name="Templates_templatesManager_newTemplate" xml:space="preserve"><value>Criar modelo</value></data>
+  <data name="Templates_templatesManager_searchTemplates" xml:space="preserve"><value>Buscar modelos…</value></data>
+  <data name="Templates_templatesManager_allStatuses" xml:space="preserve"><value>Todos os status</value></data>
+  <data name="Templates_templatesManager_allCategories" xml:space="preserve"><value>Todas as categorias</value></data>
+  <data name="Templates_templatesManager_allTypes" xml:space="preserve"><value>Todos os tipos</value></data>
+  <data name="Templates_templatesManager_allLanguages" xml:space="preserve"><value>Todos os idiomas</value></data>
+  <data name="Templates_templatesManager_FailedToLoadTemplates" xml:space="preserve"><value>Falha ao carregar os modelos: {message}</value></data>
+  <data name="Templates_templatesManager_connectAWhatsappNumberToViewTemplates" xml:space="preserve"><value>Conecte um número do WhatsApp para ver os modelos.</value></data>
+  <data name="Templates_templatesManager_noTemplatesCreatedOnThisWabaYet" xml:space="preserve"><value>Nenhum modelo criado nesta WABA ainda.</value></data>
+  <data name="Templates_templatesManager_noTemplatesMatchTheCurrentFilters" xml:space="preserve"><value>Nenhum modelo corresponde aos filtros atuais.</value></data>
+  <data name="Templates_templatesManager_qualityScore" xml:space="preserve"><value>Qualidade: {score}</value></data>
+  <data name="Templates_templatesManager_selectATemplateToSeeItsPreview" xml:space="preserve"><value>Selecione um modelo para ver a prévia e os detalhes.</value></data>
+  <data name="Templates_templateDetail_copied" xml:space="preserve"><value>Copiado</value></data>
+  <data name="Templates_templateDetail_copyJson" xml:space="preserve"><value>Copiar JSON</value></data>
+  <data name="Templates_templateDetail_duplicateAsNew" xml:space="preserve"><value>Duplicar como novo</value></data>
+  <data name="Templates_templateDetail_variablesAndExamples" xml:space="preserve"><value>Variáveis e exemplos</value></data>
+  <data name="Templates_templateDetail_variableCount" xml:space="preserve"><value>{count}</value></data>
+  <data name="Templates_templateDetail_bodyText" xml:space="preserve"><value>Texto do corpo</value></data>
+  <data name="Templates_templateDetail_footerText" xml:space="preserve"><value>Texto do rodapé</value></data>
+  <data name="Templates_templateDetail_offerText" xml:space="preserve"><value>Texto da oferta</value></data>
+  <data name="Templates_templateDetail_carouselCards" xml:space="preserve"><value>Cartões do carrossel</value></data>
+  <data name="Templates_templateDetail_buttons" xml:space="preserve"><value>Botões</value></data>
+  <data name="Templates_templateDetail_AllowedInFirst72hMaximum1Per" xml:space="preserve"><value>{count} permitidas nas primeiras 72h · máximo de 1 a cada 24h</value></data>
+  <data name="Templates_templateDetail_sampleCustomer" xml:space="preserve"><value>Cliente de exemplo</value></data>
+  <data name="Templates_templateDetail_online" xml:space="preserve"><value>online</value></data>
+  <data name="Templates_templateDetail_templateData" xml:space="preserve"><value>Dados do modelo</value></data>
+  <data name="Templates_templateDetail_status" xml:space="preserve"><value>Status</value></data>
+  <data name="Templates_templateDetail_category" xml:space="preserve"><value>Categoria</value></data>
+  <data name="Templates_templateDetail_type" xml:space="preserve"><value>Tipo</value></data>
+  <data name="Templates_templateDetail_quality" xml:space="preserve"><value>Qualidade</value></data>
+  <data name="Templates_templateDetail_header" xml:space="preserve"><value>Cabeçalho</value></data>
+  <data name="Templates_templateDetail_RejectionReason" xml:space="preserve"><value>Motivo da rejeição: {reason}</value></data>
+  <data name="Templates_templateEditor_details" xml:space="preserve"><value>1. Detalhes</value></data>
+  <data name="Templates_templateEditor_content" xml:space="preserve"><value>2. Conteúdo</value></data>
+  <data name="Templates_templateEditor_review" xml:space="preserve"><value>3. Revisão</value></data>
+  <data name="Templates_templateEditor_createMessageTemplate" xml:space="preserve"><value>Criar modelo de mensagem</value></data>
+  <data name="Templates_templateEditor_stepIndexOf" xml:space="preserve"><value>Etapa {index} de {total}</value></data>
+  <data name="Templates_templateEditor_templateName" xml:space="preserve"><value>Nome do modelo</value></data>
+  <data name="Templates_templateEditor_useLowercaseLettersNumbersAndUnderscoresChanging" xml:space="preserve"><value>Use letras minúsculas, números e sublinhados. Alterar o nome cria um novo modelo na Meta.</value></data>
+  <data name="Templates_templateEditor_category" xml:space="preserve"><value>Categoria</value></data>
+  <data name="Templates_templateEditor_templateType" xml:space="preserve"><value>Tipo de modelo</value></data>
+  <data name="Templates_templateEditor_header" xml:space="preserve"><value>Cabeçalho</value></data>
+  <data name="Templates_templateEditor_noHeader" xml:space="preserve"><value>Sem cabeçalho</value></data>
+  <data name="Templates_templateEditor_text" xml:space="preserve"><value>Texto</value></data>
+  <data name="Templates_templateEditor_document" xml:space="preserve"><value>Documento</value></data>
+  <data name="Templates_templateEditor_productCatalog" xml:space="preserve"><value>Produto (catálogo)</value></data>
+  <data name="Templates_templateEditor_exampleForEachHeaderVariable" xml:space="preserve"><value>Exemplo para cada variável do cabeçalho</value></data>
+  <data name="Templates_templateEditor_exampleValueForV" xml:space="preserve"><value>Valor de exemplo para {{{{{v}}}}}</value></data>
+  <data name="Templates_templateEditor_headerSampleMedia" xml:space="preserve"><value>Mídia de amostra do cabeçalho</value></data>
+  <data name="Templates_templateEditor_uploadingSample" xml:space="preserve"><value>Enviando amostra…</value></data>
+  <data name="Templates_templateEditor_uploadFileFromComputer" xml:space="preserve"><value>Enviar arquivo do computador</value></data>
+  <data name="Templates_templateEditor_acceptedTypesMaxMaxmbMbSentTo" xml:space="preserve"><value>Aceitos: {types} · máx. {maxMb} MB. Enviado à Meta para gerar o header_handle.</value></data>
+  <data name="Templates_templateEditor_enterHeaderHandleManuallyAdvanced" xml:space="preserve"><value>Informar header_handle manualmente (avançado)</value></data>
+  <data name="Templates_templateEditor_headerHandleOrSampleMediaUrl" xml:space="preserve"><value>4::aW1hZ2U… (header_handle ou URL de mídia de amostra)</value></data>
+  <data name="Templates_templateEditor_ProductHeaderRequiresACatalogConnectedTo" xml:space="preserve"><value>O cabeçalho de produto requer um catálogo conectado a esta WABA no Gerenciador de Comércio.</value></data>
+  <data name="Templates_templateEditor_body" xml:space="preserve"><value>Corpo</value></data>
+  <data name="Templates_templateEditor_required" xml:space="preserve"><value>obrigatório</value></data>
+  <data name="Templates_templateEditor_boldItalicStrikethroughCodeVariablesLookLike" xml:space="preserve"><value>Negrito *texto*, itálico _texto_, tachado ~texto~, código `texto`. Variáveis ficam como {{1}} ou {{nome_cliente}}.</value></data>
+  <data name="Templates_templateEditor_addVariable" xml:space="preserve"><value>+ Variável</value></data>
+  <data name="Templates_templateEditor_exampleValuesRequiredByMetaWhenVariables" xml:space="preserve"><value>Valores de exemplo (obrigatórios pela Meta ao usar variáveis)</value></data>
+  <data name="Templates_templateEditor_footer" xml:space="preserve"><value>Rodapé</value></data>
+  <data name="Templates_templateEditor_optional" xml:space="preserve"><value>opcional</value></data>
+  <data name="Templates_templateEditor_upTo60CharactersNoVariablesAllowed" xml:space="preserve"><value>Até 60 caracteres · sem variáveis</value></data>
+  <data name="Templates_templateEditor_limitedTimeOffer" xml:space="preserve"><value>Oferta por tempo limitado</value></data>
+  <data name="Templates_templateEditor_offerTextMaxCharsCharacters" xml:space="preserve"><value>Texto da oferta (máx. {chars} caracteres)</value></data>
+  <data name="Templates_templateEditor_showOfferExpirationCountdown" xml:space="preserve"><value>Mostrar contagem regressiva de expiração da oferta</value></data>
+  <data name="Templates_templateEditor_authenticationSettings" xml:space="preserve"><value>Configurações de autenticação</value></data>
+  <data name="Templates_templateEditor_codeDeliveryMethod" xml:space="preserve"><value>Método de entrega do código</value></data>
+  <data name="Templates_templateEditor_copyCodeButton" xml:space="preserve"><value>Botão de copiar código</value></data>
+  <data name="Templates_templateEditor_oneTapAutofillAndroid" xml:space="preserve"><value>Preenchimento automático com um toque (Android)</value></data>
+  <data name="Templates_templateEditor_zeroTapAutofillAndroid" xml:space="preserve"><value>Preenchimento automático sem toque (Android)</value></data>
+  <data name="Templates_templateEditor_addSecurityRecommendationInBody" xml:space="preserve"><value>Adicionar recomendação de segurança no corpo</value></data>
+  <data name="Templates_templateEditor_codeExpirationMinutesOptional" xml:space="preserve"><value>Expiração do código (minutos, opcional)</value></data>
+  <data name="Templates_templateEditor_noExpiration" xml:space="preserve"><value>Sem expiração</value></data>
+  <data name="Templates_templateEditor_buttonLabel" xml:space="preserve"><value>Rótulo do botão</value></data>
+  <data name="Templates_templateEditor_autofillButtonLabel" xml:space="preserve"><value>Rótulo do botão de preenchimento automático</value></data>
+  <data name="Templates_templateEditor_androidApps" xml:space="preserve"><value>Apps Android</value></data>
+  <data name="Templates_templateEditor_addApp" xml:space="preserve"><value>+ Adicionar app</value></data>
+  <data name="Templates_templateEditor_androidPackageNameComExampleApp" xml:space="preserve"><value>Nome do pacote Android (com.exemplo.app)</value></data>
+  <data name="Templates_templateEditor_11CharKeyHash" xml:space="preserve"><value>Hash da chave de 11 caracteres</value></data>
+  <data name="Templates_templateEditor_removeApp" xml:space="preserve"><value>Remover app</value></data>
+  <data name="Templates_templateEditor_iUnderstandZeroTapTermsAndRequirements" xml:space="preserve"><value>Compreendo os termos e requisitos do zero-tap</value></data>
+  <data name="Templates_templateEditor_buttons" xml:space="preserve"><value>Botões</value></data>
+  <data name="Templates_templateEditor_max10QuickRepliesAndCallTo" xml:space="preserve"><value>Máx. 10 · respostas rápidas e botões de ação são agrupados automaticamente</value></data>
+  <data name="Templates_templateEditor_phoneCall" xml:space="preserve"><value>Ligação telefônica</value></data>
+  <data name="Templates_templateEditor_copyCode" xml:space="preserve"><value>Copiar código</value></data>
+  <data name="Templates_templateEditor_whatsappFlow" xml:space="preserve"><value>WhatsApp Flow</value></data>
+  <data name="Templates_templateEditor_voiceCall" xml:space="preserve"><value>Chamada de voz</value></data>
+  <data name="Templates_templateEditor_catalog" xml:space="preserve"><value>Catálogo</value></data>
+  <data name="Templates_templateEditor_multiProductMpm" xml:space="preserve"><value>Multiproduto (MPM)</value></data>
+  <data name="Templates_templateEditor_singleProductSpm" xml:space="preserve"><value>Produto único (SPM)</value></data>
+  <data name="Templates_templateEditor_otp" xml:space="preserve"><value>OTP</value></data>
+  <data name="Templates_templateEditor_moveUp" xml:space="preserve"><value>Mover para cima</value></data>
+  <data name="Templates_templateEditor_moveDown" xml:space="preserve"><value>Mover para baixo</value></data>
+  <data name="Templates_templateEditor_removeButton" xml:space="preserve"><value>Remover botão</value></data>
+  <data name="Templates_templateEditor_buttonText" xml:space="preserve"><value>Texto do botão</value></data>
+  <data name="Templates_templateEditor_httpsExampleComPath1" xml:space="preserve"><value>https://exemplo.com/caminho/{{1}}</value></data>
+  <data name="Templates_templateEditor_exampleFullUrlWithVariableResolved" xml:space="preserve"><value>URL completa de exemplo com a variável preenchida</value></data>
+  <data name="Templates_templateEditor_flowId" xml:space="preserve"><value>ID do Flow</value></data>
+  <data name="Templates_templateEditor_flowAction" xml:space="preserve"><value>Ação do Flow</value></data>
+  <data name="Templates_templateEditor_navigate" xml:space="preserve"><value>navigate</value></data>
+  <data name="Templates_templateEditor_dataExchange" xml:space="preserve"><value>data_exchange</value></data>
+  <data name="Templates_templateEditor_firstScreenIdOptional" xml:space="preserve"><value>ID da primeira tela (opcional)</value></data>
+  <data name="Templates_templateEditor_exampleCouponOrCode" xml:space="preserve"><value>Cupom ou código de exemplo</value></data>
+  <data name="Templates_templateEditor_carouselCardsCount" xml:space="preserve"><value>Cartões do carrossel ({count}/10)</value></data>
+  <data name="Templates_templateEditor_addCard" xml:space="preserve"><value>+ Adicionar cartão</value></data>
+  <data name="Templates_templateEditor_eachCardNeedsAnImageOrVideo" xml:space="preserve"><value>Cada cartão precisa de cabeçalho com imagem ou vídeo, texto de corpo e até 2 botões. Todos os cartões devem ter o mesmo formato de cabeçalho e tipos de botão.</value></data>
+  <data name="Templates_templateEditor_CardIndex" xml:space="preserve"><value>Cartão {index}</value></data>
+  <data name="Templates_templateEditor_removeCard" xml:space="preserve"><value>Remover cartão</value></data>
+  <data name="Templates_templateEditor_cardHeaderFormat" xml:space="preserve"><value>Formato do cabeçalho do cartão</value></data>
+  <data name="Templates_templateEditor_cardHeaderSample" xml:space="preserve"><value>Amostra do cabeçalho do cartão</value></data>
+  <data name="Templates_templateEditor_uploadSample" xml:space="preserve"><value>Enviando amostra…</value></data>
+  <data name="Templates_templateEditor_uploadImageOrVideoSample" xml:space="preserve"><value>Enviar amostra de imagem ou vídeo</value></data>
+  <data name="Templates_templateEditor_headerHandle" xml:space="preserve"><value>header_handle</value></data>
+  <data name="Templates_templateEditor_cardBody" xml:space="preserve"><value>Corpo do cartão</value></data>
+  <data name="Templates_templateEditor_exampleForV" xml:space="preserve"><value>Exemplo para {{{{{v}}}}}</value></data>
+  <data name="Templates_templateEditor_cardButtonsMax2" xml:space="preserve"><value>Botões do cartão (máx. 2)</value></data>
+  <data name="Templates_templateEditor_fixBeforeSubmitting" xml:space="preserve"><value>Corrija antes de enviar</value></data>
+  <data name="Templates_templateEditor_readyToSubmitToMetaApprovalUsually" xml:space="preserve"><value>Pronto para enviar à Meta. A aprovação costuma levar de alguns minutos a 24 horas.</value></data>
+  <data name="Templates_templateEditor_name" xml:space="preserve"><value>Nome</value></data>
+  <data name="Templates_templateEditor_type" xml:space="preserve"><value>Tipo</value></data>
+  <data name="Templates_templateEditor_cards" xml:space="preserve"><value>Cartões</value></data>
+  <data name="Templates_templateEditor_graphApiPayload" xml:space="preserve"><value>Payload da Graph API</value></data>
+  <data name="Templates_templateEditor_submittingToMeta" xml:space="preserve"><value>Enviando à Meta…</value></data>
+  <data name="Templates_templatePreview_productFromCatalog" xml:space="preserve"><value>Produto do catálogo</value></data>
+  <data name="Templates_templatePreview_sampleDocumentPdf" xml:space="preserve"><value>Documento de exemplo.pdf</value></data>
+  <data name="Templates_templatePreview_sampleLocation" xml:space="preserve"><value>Localização de exemplo</value></data>
+  <data name="Templates_templatePreview_sampleMedia" xml:space="preserve"><value>Mídia de exemplo</value></data>
+  <data name="Templates_templatePreview_CodeIsYourVerificationCode" xml:space="preserve"><value>*{code}* é seu código de verificação.</value></data>
+  <data name="Templates_templatePreview_forYourSecurityDoNotShareThis" xml:space="preserve"><value>Para sua segurança, não compartilhe este código.</value></data>
+  <data name="Templates_templatePreview_offerText" xml:space="preserve"><value>Texto da oferta</value></data>
+  <data name="Templates_templatePreview_offerExpiresSoon" xml:space="preserve"><value>A oferta expira em breve</value></data>
+  <data name="Templates_templatePreview_ThisCodeExpiresInMinutesMinutes" xml:space="preserve"><value>Este código expira em {minutes} minutos.</value></data>
+  <data name="Templates_templatePreview_viewAllOptions" xml:space="preserve"><value>Ver todas as opções</value></data>
+  <data name="Templates_templatePreview_copyCode" xml:space="preserve"><value>Copiar código</value></data>
+  <data name="Templates_templatePreview_viewCatalog" xml:space="preserve"><value>Ver catálogo</value></data>
+  <data name="Templates_templatePreview_viewItems" xml:space="preserve"><value>Ver itens</value></data>
+  <data name="Templates_templatePreview_viewProduct" xml:space="preserve"><value>Ver produto</value></data>
+  <data name="Templates_templatePreview_button" xml:space="preserve"><value>Botão</value></data>
+  <data name="Templates_templatePreview_allowCallsFromThisBusiness" xml:space="preserve"><value>Permitir chamadas desta empresa?</value></data>
+  <data name="Templates_templatePreview_allowDecline" xml:space="preserve"><value>Permitir · Recusar</value></data>
+  <data name="Templates_templatePreview_whatsappPreviewIllustrative" xml:space="preserve"><value>Prévia no WhatsApp · ilustrativa</value></data>
+  <data name="Templates_templatePreview_CardsSwipe" xml:space="preserve"><value>{count} cartões · deslize</value></data>
+  <data name="Templates_templatePreview_EmptyBody" xml:space="preserve"><value>Seu texto aparecerá aqui…</value></data>
+  <data name="Templates_templatesCatalog_standardText" xml:space="preserve"><value>Texto padrão</value></data>
+  <data name="Templates_templatesCatalog_richTextBodyWithOptionalHeaderFooter" xml:space="preserve"><value>Corpo de texto com cabeçalho, rodapé e botões opcionais</value></data>
+  <data name="Templates_templatesCatalog_mediaHeader" xml:space="preserve"><value>Cabeçalho de mídia</value></data>
+  <data name="Templates_templatesCatalog_imageVideoDocumentOrLocationAboveThe" xml:space="preserve"><value>Imagem, vídeo, documento ou localização acima da mensagem</value></data>
+  <data name="Templates_templatesCatalog_mediaCarousel" xml:space="preserve"><value>Carrossel de mídia</value></data>
+  <data name="Templates_templatesCatalog_2To10ScrollableCardsWithImage" xml:space="preserve"><value>De 2 a 10 cartões deslizáveis com imagem ou vídeo</value></data>
+  <data name="Templates_templatesCatalog_productCarousel" xml:space="preserve"><value>Carrossel de produtos</value></data>
+  <data name="Templates_templatesCatalog_scrollableCatalogProductCards" xml:space="preserve"><value>Cartões deslizáveis de produtos do catálogo</value></data>
+  <data name="Templates_templatesCatalog_catalog" xml:space="preserve"><value>Catálogo</value></data>
+  <data name="Templates_templatesCatalog_opensYourConnectedWhatsappProductCatalog" xml:space="preserve"><value>Abre o catálogo de produtos conectado ao WhatsApp</value></data>
+  <data name="Templates_templatesCatalog_multiProductMpm" xml:space="preserve"><value>Multiproduto (MPM)</value></data>
+  <data name="Templates_templatesCatalog_curatedProductSectionsFromYourCatalog" xml:space="preserve"><value>Seções selecionadas de produtos do seu catálogo</value></data>
+  <data name="Templates_templatesCatalog_singleProductSpm" xml:space="preserve"><value>Produto único (SPM)</value></data>
+  <data name="Templates_templatesCatalog_highlightsOneProductFromYourCatalog" xml:space="preserve"><value>Destaca um produto do seu catálogo</value></data>
+  <data name="Templates_templatesCatalog_limitedTimeOffer" xml:space="preserve"><value>Oferta por tempo limitado</value></data>
+  <data name="Templates_templatesCatalog_countdownBannerWithOptionalCouponAndUrl" xml:space="preserve"><value>Banner com contagem regressiva, cupom e link opcionais</value></data>
+  <data name="Templates_templatesCatalog_couponCode" xml:space="preserve"><value>Código de cupom</value></data>
+  <data name="Templates_templatesCatalog_promotionalBodyWithAOneTapCopy" xml:space="preserve"><value>Texto promocional com botão para copiar o código</value></data>
+  <data name="Templates_templatesCatalog_authenticationOtp" xml:space="preserve"><value>Autenticação (OTP)</value></data>
+  <data name="Templates_templatesCatalog_oneTimePasscodeWithCopyCodeOne" xml:space="preserve"><value>Código único com botão de copiar, um toque ou zero toque</value></data>
+  <data name="Templates_templatesCatalog_whatsappFlow" xml:space="preserve"><value>WhatsApp Flow</value></data>
+  <data name="Templates_templatesCatalog_launchesAnInteractiveWhatsappFlowForm" xml:space="preserve"><value>Abre um formulário interativo do WhatsApp Flow</value></data>
+  <data name="Templates_templatesCatalog_callPermission" xml:space="preserve"><value>Permissão de chamada</value></data>
+  <data name="Templates_templatesCatalog_asksCustomerPermissionBeforeBusinessInitiatedCalls" xml:space="preserve"><value>Pede permissão ao cliente antes de chamadas iniciadas pela empresa</value></data>
+  <data name="Templates_templatesCatalog_marketing" xml:space="preserve"><value>Marketing</value></data>
+  <data name="Templates_templatesCatalog_promotionsOffersProductAnnouncementsAndReEngagement" xml:space="preserve"><value>Promoções, ofertas, lançamentos e reengajamento</value></data>
+  <data name="Templates_templatesCatalog_utility" xml:space="preserve"><value>Utilidade</value></data>
+  <data name="Templates_templatesCatalog_orderUpdatesAccountAlertsAndTransactionConfirmations" xml:space="preserve"><value>Atualizações de pedidos, alertas de conta e confirmações</value></data>
+  <data name="Templates_templatesCatalog_authentication" xml:space="preserve"><value>Autenticação</value></data>
+  <data name="Templates_templatesCatalog_oneTimePasscodesAndAccountVerification" xml:space="preserve"><value>Códigos descartáveis e verificação de conta</value></data>
+  <data name="Templates_templatesCatalog_quickReply" xml:space="preserve"><value>Resposta rápida</value></data>
+  <data name="Templates_templatesCatalog_urlWebsite" xml:space="preserve"><value>URL / site</value></data>
+  <data name="Templates_templatesCatalog_phoneNumber" xml:space="preserve"><value>Telefone</value></data>
+  <data name="Templates_templatesCatalog_copyCode" xml:space="preserve"><value>Copiar código</value></data>
+  <data name="Templates_templatesCatalog_voiceCall" xml:space="preserve"><value>Chamada de voz</value></data>
+  <data name="Templates_templatesCatalog_multiProduct" xml:space="preserve"><value>Multiproduto</value></data>
+  <data name="Templates_templatesCatalog_singleProduct" xml:space="preserve"><value>Produto único</value></data>
+  <data name="Templates_templatesCatalog_otpCopyOneTap" xml:space="preserve"><value>OTP (copiar / um toque)</value></data>
+  <data name="Templates_templatesCatalog_button" xml:space="preserve"><value>Botão</value></data>
+  <data name="Templates_templatesDisplay_approved" xml:space="preserve"><value>Aprovado</value></data>
+  <data name="Templates_templatesDisplay_pending" xml:space="preserve"><value>Pendente</value></data>
+  <data name="Templates_templatesDisplay_rejected" xml:space="preserve"><value>Rejeitado</value></data>
+  <data name="Templates_templatesDisplay_paused" xml:space="preserve"><value>Pausado</value></data>
+  <data name="Templates_templatesDisplay_disabled" xml:space="preserve"><value>Desativado</value></data>
+  <data name="Templates_templatesDisplay_inAppeal" xml:space="preserve"><value>Em recurso</value></data>
+  <data name="Templates_templatesDisplay_deleted" xml:space="preserve"><value>Excluído</value></data>
+  <data name="Templates_templatesDisplay_pendingDeletion" xml:space="preserve"><value>Exclusão pendente</value></data>
+  <data name="Templates_templatesDisplay_limitExceeded" xml:space="preserve"><value>Limite excedido</value></data>
+  <data name="Templates_templatesDisplay_high" xml:space="preserve"><value>Alta</value></data>
+  <data name="Templates_templatesDisplay_medium" xml:space="preserve"><value>Média</value></data>
+  <data name="Templates_templatesDisplay_low" xml:space="preserve"><value>Baixa</value></data>
+  <data name="Templates_templatesDisplay_pendingScore" xml:space="preserve"><value>Pendente</value></data>
+  <data name="Templates_templatesUpload_SelectAFileForLabelHeaderWait" xml:space="preserve"><value>Selecione um arquivo para o cabeçalho de {label}</value></data>
+  <data name="Templates_templatesUpload_LabelIsEmptyChooseANonEmpty" xml:space="preserve"><value>{label} está vazio — escolha um arquivo com conteúdo</value></data>
+  <data name="Templates_templatesUpload_LabelIsSizeMaximumForThisHeader" xml:space="preserve"><value>{label} tem {size} — o limite para este cabeçalho é {maxMb} MB</value></data>
+  <data name="Templates_templatesUpload_LabelHasUnsupportedFormatTypeUseFormats" xml:space="preserve"><value>{label} está em um formato não suportado ({type}) — use {formats}</value></data>
+  <data name="Templates_templatesValidation_templateNameIsRequired" xml:space="preserve"><value>O nome do modelo é obrigatório</value></data>
+  <data name="Templates_templatesValidation_useLowercaseLettersNumbersAndUnderscoresOnly" xml:space="preserve"><value>Use apenas letras minúsculas, números e sublinhados (deve começar com letra ou número)</value></data>
+  <data name="Templates_templatesValidation_nameMustBeAtMostMaxCharacters" xml:space="preserve"><value>O nome deve ter no máximo {max} caracteres</value></data>
+  <data name="Templates_templatesValidation_languageCodeIsRequired" xml:space="preserve"><value>O código de idioma é obrigatório</value></data>
+  <data name="Templates_templatesValidation_CategoryMustBeLabelForThisTemplate" xml:space="preserve"><value>A categoria deve ser {label} para este tipo de modelo</value></data>
+  <data name="Templates_templatesValidation_TextHeaderMustBeAtMostMax" xml:space="preserve"><value>O cabeçalho de texto deve ter no máximo {max} caracteres</value></data>
+  <data name="Templates_templatesValidation_textHeaderSupportsAtMostOneVariable" xml:space="preserve"><value>O cabeçalho de texto aceita no máximo uma variável</value></data>
+  <data name="Templates_templatesValidation_addAnExampleValueForEachHeader" xml:space="preserve"><value>Adicione um valor de exemplo para cada variável do cabeçalho</value></data>
+  <data name="Templates_templatesValidation_uploadASampleFileOrProvideA" xml:space="preserve"><value>Envie um arquivo de amostra ou informe um handle de amostra para o cabeçalho {format}</value></data>
+  <data name="Templates_templatesValidation_bodyTextIsRequired" xml:space="preserve"><value>O texto do corpo é obrigatório</value></data>
+  <data name="Templates_templatesValidation_BodyMustBeAtMostMaxCharacters" xml:space="preserve"><value>O corpo deve ter no máximo {max} caracteres ({current}/{max})</value></data>
+  <data name="Templates_templatesValidation_variablesCannotBeAtTheVeryStart" xml:space="preserve"><value>Variáveis não podem ficar no início ou no fim do corpo</value></data>
+  <data name="Templates_templatesValidation_VariablesCannotBeAdjacentAddTextBetween" xml:space="preserve"><value>Variáveis não podem ficar juntas — adicione texto entre {{1}} e {{2}}</value></data>
+  <data name="Templates_templatesValidation_PositionalVariablesMustBeSequentialStartingAt" xml:space="preserve"><value>Variáveis posicionais devem ser sequenciais começando em {{1}} (faltando {{{{{n}}}}})</value></data>
+  <data name="Templates_templatesValidation_DuplicateNamedVariableVInBody" xml:space="preserve"><value>Variável nomeada duplicada {{{{{v}}}}} no corpo</value></data>
+  <data name="Templates_templatesValidation_doNotMixPositional1AndNamed" xml:space="preserve"><value>Não misture variáveis posicionais ({{1}}) e nomeadas ({{nome}})</value></data>
+  <data name="Templates_templatesValidation_addAnExampleValueForEachBody" xml:space="preserve"><value>Adicione um valor de exemplo para cada variável do corpo</value></data>
+  <data name="Templates_templatesValidation_FooterMustBeAtMostMaxCharacters" xml:space="preserve"><value>O rodapé deve ter no máximo {max} caracteres</value></data>
+  <data name="Templates_templatesValidation_footerCannotContainVariables" xml:space="preserve"><value>O rodapé não pode conter variáveis</value></data>
+  <data name="Templates_templatesValidation_limitedTimeOfferTemplatesCannotIncludeA" xml:space="preserve"><value>Modelos de oferta por tempo limitado não podem incluir rodapé</value></data>
+  <data name="Templates_templatesValidation_limitedTimeOfferTextIsRequired" xml:space="preserve"><value>O texto da oferta por tempo limitado é obrigatório</value></data>
+  <data name="Templates_templatesValidation_OfferTextMustBeAtMostMax" xml:space="preserve"><value>O texto da oferta deve ter no máximo {max} caracteres</value></data>
+  <data name="Templates_templatesValidation_offerTemplatesRequireACopyCodeOr" xml:space="preserve"><value>Modelos de oferta exigem um botão de copiar código ou de URL</value></data>
+  <data name="Templates_templatesValidation_couponTemplatesRequireACopyCodeButton" xml:space="preserve"><value>Modelos de cupom exigem um botão de copiar código</value></data>
+  <data name="Templates_templatesValidation_atMostMaxButtonsAreAllowed" xml:space="preserve"><value>São permitidos no máximo {max} botões</value></data>
+  <data name="Templates_templatesValidation_QuickReplyButtonsMustBeGroupedTogether" xml:space="preserve"><value>Botões de resposta rápida devem ficar agrupados (sem intercalar com botões de ação)</value></data>
+  <data name="Templates_templatesValidation_FlowButtonIRequiresAFlowId" xml:space="preserve"><value>O botão de Flow {i} exige um Flow ID</value></data>
+  <data name="Templates_templatesValidation_UrlButtonIRequiresValidHttpsUrl" xml:space="preserve"><value>O botão de URL {i} exige uma URL http(s) válida</value></data>
+  <data name="Templates_templatesValidation_UrlButtonISupportsAtMostOne" xml:space="preserve"><value>O botão de URL {i} aceita no máximo uma variável</value></data>
+  <data name="Templates_templatesValidation_AddAFullExampleUrlForButton" xml:space="preserve"><value>Adicione uma URL completa de exemplo para o botão {i}</value></data>
+  <data name="Templates_templatesValidation_PhoneButtonIRequiresPhoneNumberWith" xml:space="preserve"><value>O botão de telefone {i} exige um número com código do país</value></data>
+  <data name="Templates_templatesValidation_CopyCodeButtonIRequiresAnExample" xml:space="preserve"><value>O botão de copiar código {i} exige um código de exemplo</value></data>
+  <data name="Templates_templatesValidation_CopyCodeExampleInButtonIMust" xml:space="preserve"><value>O exemplo de código no botão {i} deve ter no máximo {max} caracteres</value></data>
+  <data name="Templates_templatesValidation_ButtonITextIsRequired" xml:space="preserve"><value>O texto do botão {i} é obrigatório</value></data>
+  <data name="Templates_templatesValidation_ButtonITextMustBeAtMost" xml:space="preserve"><value>O texto do botão {i} deve ter no máximo {max} caracteres</value></data>
+  <data name="Templates_templatesValidation_CarouselRequiresBetweenMinAndMaxCards" xml:space="preserve"><value>O carrossel exige entre {min} e {max} cartões</value></data>
+  <data name="Templates_templatesValidation_allCarouselCardsMustUseTheSame" xml:space="preserve"><value>Todos os cartões do carrossel devem usar o mesmo formato de cabeçalho (IMAGE, VIDEO ou PRODUCT)</value></data>
+  <data name="Templates_templatesValidation_allCarouselCardsMustUseTheSame2" xml:space="preserve"><value>Todos os cartões do carrossel devem usar os mesmos tipos de botão na mesma ordem</value></data>
+  <data name="Templates_templatesValidation_CardIRequiresAHeaderSampleHandle" xml:space="preserve"><value>O cartão {i} exige um handle de amostra no cabeçalho</value></data>
+  <data name="Templates_templatesValidation_CardIBodyTextIsRequired" xml:space="preserve"><value>O texto do corpo do cartão {i} é obrigatório</value></data>
+  <data name="Templates_templatesValidation_CardIBodyMustBeAtMost" xml:space="preserve"><value>O corpo do cartão {i} deve ter no máximo {max} caracteres</value></data>
+  <data name="Templates_templatesValidation_CardINeedsAnExampleForEvery" xml:space="preserve"><value>O cartão {i} precisa de um exemplo para cada variável do corpo</value></data>
+  <data name="Templates_templatesValidation_CardIAllowsAtMostMaxButtons" xml:space="preserve"><value>O cartão {i} permite no máximo {max} botões</value></data>
+  <data name="Templates_templatesValidation_CardIButtonJTextIsRequired" xml:space="preserve"><value>O texto do botão {j} do cartão {i} é obrigatório</value></data>
+  <data name="Templates_templatesValidation_CardIButtonJRequiresValidHttps" xml:space="preserve"><value>O botão {j} do cartão {i} exige uma URL http(s) válida</value></data>
+  <data name="Templates_templatesValidation_CardIButtonJNeedsAnExample" xml:space="preserve"><value>O botão {j} do cartão {i} precisa de uma URL de exemplo para sua variável</value></data>
+  <data name="Templates_templatesValidation_CardIButtonJRequiresPhoneNumber" xml:space="preserve"><value>O botão {j} do cartão {i} exige um número de telefone</value></data>
+  <data name="Templates_templatesValidation_codeExpirationMustBeBetween1And" xml:space="preserve"><value>A expiração do código deve ser entre 1 e 90 minutos</value></data>
+  <data name="Templates_templatesValidation_oneTapAndZeroTapRequireAt" xml:space="preserve"><value>Um toque e zero toque exigem pelo menos um app Android com nome do pacote e hash de assinatura de 11 caracteres</value></data>
+  <data name="Templates_templatesValidation_AppIRequiresAndroidPackageNameAnd" xml:space="preserve"><value>O app {i} exige o nome do pacote Android e um hash de chave de 11 caracteres</value></data>
+  <data name="Templates_templatesValidation_acceptZeroTapTermsBeforeSubmittingA" xml:space="preserve"><value>Aceite os termos do zero-tap antes de enviar um modelo de autenticação zero-tap</value></data>
+  <data name="Templates_templatesSend_flowButtonsWithoutASavedFlowId" xml:space="preserve"><value>Botões de Flow sem um flow_id salvo não podem ser enviados até que o modelo seja recriado com um Flow ID.</value></data>
+  <data name="Templates_templatesSend_CatalogAndProductTemplatesRequireCatalogProduct" xml:space="preserve"><value>Modelos de catálogo e de produto exigem IDs de produtos de um catálogo da Meta Commerce conectado.</value></data>
+  <data name="Templates_templatesSend_AuthenticationTemplatesMustBeSentFromYour" xml:space="preserve"><value>Modelos de autenticação devem ser enviados pelo seu backend com o código de verificação gerado para o usuário.</value></data>
+  <data name="Templates_templatesSend_CardIndex" xml:space="preserve"><value>Cartão {index}</value></data>
+  <data name="Templates_templatesSend_CardIndex2" xml:space="preserve"><value>Cartão {index}: </value></data>
+  <data name="Templates_templatesSend_header" xml:space="preserve"><value>Cabeçalho</value></data>
+  <data name="Templates_templatesSend_HeaderV" xml:space="preserve"><value>Cabeçalho {{{{{v}}}}}</value></data>
+  <data name="Templates_templatesSend_BodyV" xml:space="preserve"><value>Corpo {{{{{v}}}}}</value></data>
+  <data name="Templates_templatesSend_CardIndexBodyV" xml:space="preserve"><value>Cartão {index} corpo {{{{{v}}}}}</value></data>
+  <data name="Templates_templatesSend_ButtonIndexUrlVariable" xml:space="preserve"><value>Variável da URL do botão {index}</value></data>
+  <data name="Templates_templatesSend_CardIndexButtonButtonindexUrlVariable" xml:space="preserve"><value>Variável da URL do botão {buttonIndex} do cartão {index}</value></data>
+  <data name="Templates_templatesSend_ButtonIndexCouponCode" xml:space="preserve"><value>Código de cupom do botão {index}</value></data>
+  <data name="Templates_templatesSend_RequiredLabel" xml:space="preserve"><value>Obrigatório: {label}</value></data>
+  <data name="Templates_templatesSend_SelectOrPasteValidMediaForLabel" xml:space="preserve"><value>Selecione ou cole uma mídia válida para {label}</value></data>
+  <data name="Templates_templatesSend_EnterLatitudeLongitudeLike23550546" xml:space="preserve"><value>Informe latitude, longitude (ex.: -23.5505, -46.6333)</value></data>
+  <data name="Templates_templatesSend_CardIndexRequiresAnImageOrVideo" xml:space="preserve"><value>O cartão {index} exige uma imagem ou vídeo</value></data>
+  <data name="Templates_templatesSend_CatalogTemplatesRequireTheThumbnailProductSku" xml:space="preserve"><value>Modelos de catálogo exigem o SKU do produto de capa (product_retailer_id)</value></data>
+  <data name="Templates_templatesSend_SingleProductTemplatesRequireTheProductRetailer" xml:space="preserve"><value>Modelos de produto único exigem o ID do produto (SKU)</value></data>
+  <data name="Templates_templatesSend_ProductCarouselCardIndexRequiresAProduct" xml:space="preserve"><value>O cartão {index} do carrossel de produtos exige o ID de um produto (SKU)</value></data>
+  <data name="Templates_templatesSend_MultiProductTemplatesRequireAtLeastOne" xml:space="preserve"><value>Modelos multiproduto exigem pelo menos uma seção com título e um SKU</value></data>
+  <data name="Templates_templatesSend_Confirmado" xml:space="preserve"><value>confirmado</value></data>
+  <data name="Templates_templatesSend_235505466333" xml:space="preserve"><value>-23.5505,-46.6333</value></data>
+  <data name="Templates_templatesSend_AvPaulista1000" xml:space="preserve"><value>Av. Paulista, 1000</value></data>
+  <data name="Templates_templatesSend_S0PauloSp" xml:space="preserve"><value>São Paulo, SP</value></data>
+  <data name="Templates_templatesSend_123456" xml:space="preserve"><value>123456</value></data>
+  <data name="Templates_templatesSend_Promo10" xml:space="preserve"><value>PROMO10</value></data>
+  <data name="Templates_templatesSend_SampleValue" xml:space="preserve"><value>exemplo</value></data>
+  <data name="Templates_templatesCatalog_standard" xml:space="preserve"><value>Padrão</value></data>
+  <data name="Templates_templatesCatalog_mediaLocation" xml:space="preserve"><value>Mídia / localização</value></data>
+  <data name="Templates_templatesCatalog_multipleProductsMpm" xml:space="preserve"><value>Vários produtos (MPM)</value></data>
+  <data name="Templates_templatesCatalog_productSpm" xml:space="preserve"><value>Produto (SPM)</value></data>
+  <data name="Templates_templatesCatalog_coupon" xml:space="preserve"><value>Cupom</value></data>
+  <data name="Templates_templatesCatalog_flow" xml:space="preserve"><value>Flow</value></data>
+  <data name="Templates_templatesDisplay_notYetRated" xml:space="preserve"><value>Ainda sem avaliação</value></data>
+  <data name="Templates_templatesDisplay_notProvidedByTheApi" xml:space="preserve"><value>Não informada pela API</value></data>
+  <data name="Templates_templateDetail_variableFormat" xml:space="preserve"><value>Formato de variáveis</value></data>
+  <data name="Templates_templateDetail_named" xml:space="preserve"><value>Nomeadas</value></data>
+  <data name="Templates_templateDetail_positional" xml:space="preserve"><value>Posicionais</value></data>
+  <data name="Templates_templateDetail_rejectionReason" xml:space="preserve"><value>Motivo de rejeição</value></data>
+  <data name="Templates_templateDetail_missingRejectionReason" xml:space="preserve"><value>Não informado pela API. Consulte o WhatsApp Manager.</value></data>
+  <data name="Templates_templateDetail_notApplicable" xml:space="preserve"><value>Não se aplica</value></data>
+  <data name="Templates_templateDetail_qualityDetails" xml:space="preserve"><value>Detalhes da qualidade</value></data>
+  <data name="Templates_templateDetail_missingQualityDetails" xml:space="preserve"><value>Não informados pela API</value></data>
+  <data name="Templates_templateDetail_id" xml:space="preserve"><value>ID</value></data>
+  <data name="Templates_templateDetail_examplesProvidedByTheTemplateParametersWithoutExamplesAre" xml:space="preserve"><value>Exemplos fornecidos pelo modelo. Parâmetros sem exemplo aparecem indicados abaixo.</value></data>
+  <data name="Templates_templateDetail_noExampleProvided" xml:space="preserve"><value>Exemplo não informado</value></data>
+  <data name="Templates_templateDetail_thisTemplateHasNoVariables" xml:space="preserve"><value>Este modelo não possui variáveis.</value></data>
+  <data name="Templates_templateDetail_sampleChatNoMessagesWillBeSent" xml:space="preserve"><value>Conversa simulada · nenhum envio será realizado</value></data>
+  <data name="Media_mediaLibrary_today" xml:space="preserve"><value>Hoje</value></data>
+  <data name="Media_mediaLibrary_thisWeek" xml:space="preserve"><value>Esta semana</value></data>
+  <data name="Media_mediaLibrary_lastWeek" xml:space="preserve"><value>Semana passada</value></data>
+  <data name="Media_mediaLibrary_unknownSize" xml:space="preserve"><value>Tamanho desconhecido</value></data>
+  <data name="Media_mediaLibrary_previewUnavailable" xml:space="preserve"><value>Prévia indisponível</value></data>
+  <data name="Media_mediaLibrary_image" xml:space="preserve"><value>Imagem</value></data>
+  <data name="Media_mediaLibrary_thisItemDoesNotContainAFile" xml:space="preserve"><value>Este item não contém um arquivo.</value></data>
+  <data name="Media_mediaLibrary_fileNotYetAvailableToDownload" xml:space="preserve"><value>Arquivo ainda indisponível para download.</value></data>
+  <data name="Media_mediaLibrary_couldNotDownloadTheFile" xml:space="preserve"><value>Não foi possível baixar o arquivo.</value></data>
+  <data name="Media_mediaLibrary_team" xml:space="preserve"><value>Equipe</value></data>
+  <data name="Media_mediaLibrary_allSenders" xml:space="preserve"><value>Todos os remetentes</value></data>
+  <data name="Media_mediaLibrary_meTeam" xml:space="preserve"><value>Eu / equipe</value></data>
+  <data name="Media_mediaLibrary_media" xml:space="preserve"><value>Mídia</value></data>
+  <data name="Media_mediaLibrary_cancelSelection" xml:space="preserve"><value>Cancelar seleção</value></data>
+  <data name="Media_mediaLibrary_select" xml:space="preserve"><value>Selecionar</value></data>
+  <data name="Media_mediaLibrary_contentTypes" xml:space="preserve"><value>Tipos de conteúdo</value></data>
+  <data name="Media_mediaLibrary_searchMedia" xml:space="preserve"><value>Buscar mídia</value></data>
+  <data name="Media_mediaLibrary_searchByFileCaptionLinkOrContact" xml:space="preserve"><value>Buscar por arquivo, legenda, link ou contato</value></data>
+  <data name="Media_mediaLibrary_searchSenders" xml:space="preserve"><value>Buscar remetente</value></data>
+  <data name="Media_mediaLibrary_searchContacts" xml:space="preserve"><value>Buscar contato</value></data>
+  <data name="Media_mediaLibrary_sentBy" xml:space="preserve"><value>Enviado por</value></data>
+  <data name="Media_mediaLibrary_chat" xml:space="preserve"><value>Conversa</value></data>
+  <data name="Media_mediaLibrary_allChats" xml:space="preserve"><value>Todas as conversas</value></data>
+  <data name="Media_mediaLibrary_instance" xml:space="preserve"><value>Instância</value></data>
+  <data name="Media_mediaLibrary_allInstances" xml:space="preserve"><value>Todas as instâncias</value></data>
+  <data name="Media_mediaLibrary_from" xml:space="preserve"><value>De</value></data>
+  <data name="Media_mediaLibrary_startDate" xml:space="preserve"><value>Data inicial</value></data>
+  <data name="Media_mediaLibrary_to" xml:space="preserve"><value>Até</value></data>
+  <data name="Media_mediaLibrary_endDate" xml:space="preserve"><value>Data final</value></data>
+  <data name="Media_mediaLibrary_clearFilters" xml:space="preserve"><value>Limpar filtros</value></data>
+  <data name="Media_mediaLibrary_couldNotLoadContactsAndChats" xml:space="preserve"><value>Não foi possível carregar os contatos e conversas.</value></data>
+  <data name="Media_mediaLibrary_loading" xml:space="preserve"><value>Carregando…</value></data>
+  <data name="Media_mediaLibrary_couldNotLoadMedia" xml:space="preserve"><value>Não foi possível carregar a mídia.</value></data>
+  <data name="Media_mediaLibrary_noItemsFound" xml:space="preserve"><value>Nenhum item encontrado.</value></data>
+  <data name="Media_mediaLibrary_adjustTheFiltersOrWaitForNewMessages" xml:space="preserve"><value>Ajuste os filtros ou aguarde novas mensagens.</value></data>
+  <data name="Media_mediaLibrary_couldNotRefreshTheResults" xml:space="preserve"><value>Não foi possível atualizar os resultados.</value></data>
+  <data name="Media_mediaLibrary_caption" xml:space="preserve"><value>Legenda</value></data>
+  <data name="Media_mediaLibrary_senderDate" xml:space="preserve"><value>Enviado por / data</value></data>
+  <data name="Media_mediaLibrary_actions" xml:space="preserve"><value>Ações</value></data>
+  <data name="Media_mediaLibrary_audio" xml:space="preserve"><value>Áudio</value></data>
+  <data name="Media_mediaLibrary_noCaption" xml:space="preserve"><value>Sem legenda</value></data>
+  <data name="Media_mediaLibrary_goToMessage" xml:space="preserve"><value>Ir para a mensagem</value></data>
+  <data name="Media_mediaLibrary_download" xml:space="preserve"><value>Baixar</value></data>
+  <data name="Media_mediaLibrary_forward" xml:space="preserve"><value>Encaminhar</value></data>
+  <data name="Media_mediaLibrary_loadingMore" xml:space="preserve"><value>Carregando mais…</value></data>
+  <data name="Media_mediaLibrary_couldNotLoadTryAgain" xml:space="preserve"><value>Falha ao carregar. Tentar novamente</value></data>
+  <data name="Media_mediaLibrary_loadMore" xml:space="preserve"><value>Carregar mais</value></data>
+  <data name="Media_mediaLibrary_selectAll" xml:space="preserve"><value>Selecionar todos</value></data>
+  <data name="Media_mediaLibrary_viewer" xml:space="preserve"><value>Visualizador</value></data>
+  <data name="Media_mediaLibrary_previous" xml:space="preserve"><value>Anterior</value></data>
+  <data name="Media_mediaLibrary_next" xml:space="preserve"><value>Próxima</value></data>
+  <data name="Media_mediaLibrary_searchDestinations" xml:space="preserve"><value>Buscar destino</value></data>
+  <data name="Media_mediaLibrary_searchDestinationChats" xml:space="preserve"><value>Buscar conversa de destino</value></data>
+  <data name="Media_mediaLibrary_noChatsAvailable" xml:space="preserve"><value>Nenhuma conversa disponível.</value></data>
+  <data name="Media_mediaLibrary_forwarding" xml:space="preserve"><value>Encaminhando…</value></data>
+  <data name="Media_mediaLibrary_windowClosed" xml:space="preserve"><value>Janela de 24 h fechada; envio bloqueado.</value></data>
+  <data name="Media_mediaLibrary_downloadFailed" xml:space="preserve"><value>Falha no download.</value></data>
+  <data name="Media_mediaLibrary_couldNotSend" xml:space="preserve"><value>Erro ao enviar.</value></data>
+  <data name="Media_mediaLibrary_deselect" xml:space="preserve"><value>Desmarcar</value></data>
+  <data name="Media_mediaLibrary_open" xml:space="preserve"><value>Abrir</value></data>
+  <data name="Media_mediaLibrary_mediaFallback" xml:space="preserve"><value>mídia</value></data>
+  <data name="Media_mediaLibrary_link" xml:space="preserve"><value>link</value></data>
+  <data name="Media_mediaLibrary_links" xml:space="preserve"><value>Links</value></data>
+  <data name="Media_mediaLibrary_docs" xml:space="preserve"><value>Docs</value></data>
+  <data name="Media_mediaLibrary_forwardNotice" xml:space="preserve"><value>Destinos com a janela de 24 h fechada serão bloqueados. Os arquivos serão reutilizados.</value></data>
+  <data name="Media_mediaLibrary_downloaded" xml:space="preserve"><value>{0} arquivo(s) salvo(s).</value></data>
+  <data name="Media_mediaLibrary_downloadError" xml:space="preserve"><value>{0} arquivo(s) salvo(s). {1}</value></data>
+  <data name="Media_mediaLibrary_sent" xml:space="preserve"><value>{0}: {1} enviado(s).</value></data>
+  <data name="Media_mediaLibrary_sendError" xml:space="preserve"><value>{0}: {1} enviado(s). {2}</value></data>
+  <data name="Media_mediaLibrary_selectedCount" xml:space="preserve"><value>{0} selecionado(s)</value></data>
+  <data name="Media_mediaLibrary_itemLabel" xml:space="preserve"><value>{0} {1}, {2}</value></data>
+  <data name="Media_mediaLibrary_selectItem" xml:space="preserve"><value>Selecionar {0}</value></data>
+  <data name="Media_mediaLibrary_forwardItems" xml:space="preserve"><value>Encaminhar {0} item(ns)</value></data>
+  <data name="Media_mediaLibrary_loadedCount" xml:space="preserve"><value>{0} carregado(s)</value></data>
+  <data name="Media_mediaLibrary_totalDocs" xml:space="preserve"><value>{0} documentos</value></data>
+  <data name="Media_mediaLibrary_totalDoc" xml:space="preserve"><value>{0} documento</value></data>
+  <data name="Media_mediaLibrary_totalMediaFiles" xml:space="preserve"><value>{0} arquivos de mídia</value></data>
+  <data name="Media_mediaLibrary_totalMediaFile" xml:space="preserve"><value>{0} arquivo de mídia</value></data>
+  <data name="Media_mediaLibrary_totalLinks" xml:space="preserve"><value>{0} mensagens com links</value></data>
+  <data name="Media_mediaLibrary_totalLink" xml:space="preserve"><value>{0} mensagem com link</value></data>
+  <data name="Media_mediaLibrary_document" xml:space="preserve"><value>Documento</value></data>
+  <data name="Media_mediaLibrary_you" xml:space="preserve"><value>Você</value></data>
+  <data name="awaiting_approval" xml:space="preserve"><value>Aguardando aprovação</value></data>
+  <data name="rejected" xml:space="preserve"><value>Rejeitada</value></data>
+  <data name="approved" xml:space="preserve"><value>Aprovada</value></data>
+  <data name="Approve" xml:space="preserve"><value>Aprovar</value></data>
+  <data name="Reject" xml:space="preserve"><value>Rejeitar</value></data>
+  <data name="ApprovalMarker" xml:space="preserve"><value>Aprovação</value></data>
+  <data name="ApprovalMarkerTitle" xml:space="preserve"><value>Uma mensagem aguarda aprovação</value></data>
+  <data name="ApprovalsOne" xml:space="preserve"><value>1 mensagem aguardando aprovação</value></data>
+  <data name="ApprovalsMany" xml:space="preserve"><value>{0} mensagens aguardando aprovação</value></data>
+</root>

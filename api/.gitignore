@@ -1,0 +1,23 @@
+# Env
+.env*
+!.env.example
+
+# Editors
+.vscode
+.zed
+
+# Claude Code per-user overrides (project-shared config lives in .claude/settings.json)
+.claude/settings.local.json
+
+# Supabase
+supabase/.branches
+supabase/.temp
+
+# Node
+node_modules
+package.json
+package-lock.json
+
+mise.toml
+
+.mcp.json

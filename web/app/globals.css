@@ -1,0 +1,186 @@
+/* SPDX-License-Identifier: AGPL-3.0-only */
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Neutral panels and green accents inspired by WhatsApp for Windows. */
+:root {
+  color-scheme: light;
+  --wa-layout: #e9edef;
+  --wa-panel: #f0f2f5;
+  --wa-surface: #ffffff;
+  --wa-border: #dadada;
+  --wa-heading: #111b21;
+  --wa-sub: #54656f;
+  --wa-icon: #667781;
+  --wa-accent: #128c50;
+  --wa-badge-unread: #25d366;
+  --wa-read: #0da9e5;
+  --wa-chat-default: #e4dcd4;
+  --wa-chat-green: #dce8d5;
+  --wa-chat-blue: #d8e4ed;
+  --wa-chat-lavender: #e4dcef;
+  --wa-chat-rose: #efdce0;
+  --wa-chat-sand: #eee2cd;
+  --wa-chat-slate: #dce1e5;
+  --wa-chat-bg: var(--wa-chat-default);
+  --wa-chat-pattern-opacity: 0.4;
+  --wa-sent: #dbf8c6;
+  --wa-received: #ffffff;
+  --wa-bubble-text: #000000;
+  --wa-date-bg: #e1f2fa;
+  --wa-date-text: #000000;
+  --wa-notice-bg: #fdf4c5;
+  --wa-notice-text: #000000;
+  --wa-unselected: #f8f9fa;
+  --wa-input: #ffffff;
+  --wa-menu: #ffffff;
+  --wa-danger: rgb(223, 51, 51);
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --wa-layout: #111111;
+  --wa-panel: #2c2c2c;
+  --wa-surface: #181818;
+  --wa-border: #303030;
+  --wa-heading: rgba(241, 241, 242, 0.88);
+  --wa-sub: rgb(166, 168, 170);
+  --wa-icon: #a0a0a0;
+  --wa-accent: #21b866;
+  --wa-badge-unread: #25d366;
+  --wa-read: #0da9e5;
+  --wa-chat-default: #141414;
+  --wa-chat-green: #111d16;
+  --wa-chat-blue: #111a24;
+  --wa-chat-lavender: #1b1625;
+  --wa-chat-rose: #24151a;
+  --wa-chat-sand: #211b12;
+  --wa-chat-slate: #151b1f;
+  --wa-chat-bg: var(--wa-chat-default);
+  --wa-chat-pattern-opacity: 0.08;
+  --wa-sent: #144d37;
+  --wa-received: #272727;
+  --wa-bubble-text: rgba(241, 241, 242, 0.95);
+  --wa-date-bg: rgb(30, 42, 48);
+  --wa-date-text: rgba(241, 241, 242, 0.92);
+  --wa-notice-bg: rgb(32, 39, 43);
+  --wa-notice-text: rgb(250, 217, 100);
+  --wa-unselected: #181818;
+  --wa-input: #242624;
+  --wa-menu: #282828;
+}
+
+html[data-chat-bg="green"] { --wa-chat-bg: var(--wa-chat-green); }
+html[data-chat-bg="blue"] { --wa-chat-bg: var(--wa-chat-blue); }
+html[data-chat-bg="lavender"] { --wa-chat-bg: var(--wa-chat-lavender); }
+html[data-chat-bg="rose"] { --wa-chat-bg: var(--wa-chat-rose); }
+html[data-chat-bg="sand"] { --wa-chat-bg: var(--wa-chat-sand); }
+html[data-chat-bg="slate"] { --wa-chat-bg: var(--wa-chat-slate); }
+
+@theme inline {
+  --color-layout: var(--wa-layout);
+  --color-panel: var(--wa-panel);
+  --color-surface: var(--wa-surface);
+  --color-line: var(--wa-border);
+  --color-heading: var(--wa-heading);
+  --color-sub: var(--wa-sub);
+  --color-icon: var(--wa-icon);
+  --color-accent: var(--wa-accent);
+  --color-unread: var(--wa-badge-unread);
+  --color-read: var(--wa-read);
+  --color-chat: var(--wa-chat-bg);
+  --color-sent: var(--wa-sent);
+  --color-received: var(--wa-received);
+  --color-bubble: var(--wa-bubble-text);
+  --color-date: var(--wa-date-bg);
+  --color-date-text: var(--wa-date-text);
+  --color-notice: var(--wa-notice-bg);
+  --color-notice-text: var(--wa-notice-text);
+  --color-unselected: var(--wa-unselected);
+  --color-input: var(--wa-input);
+  --color-menu: var(--wa-menu);
+  --color-danger: var(--wa-danger);
+  --font-sans: "Segoe UI", "Helvetica Neue", Helvetica, "Lucida Grande", Arial, Ubuntu, Cantarell, "Fira Sans", sans-serif;
+}
+
+html {
+  font-size: 100%;
+}
+html[data-font-size="small"] {
+  font-size: 93.75%;
+}
+html[data-font-size="large"] {
+  font-size: 112.5%;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--wa-layout);
+  color: var(--wa-heading);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* The chat wallpaper: the whatsapp-web-ui doodle over the room color. */
+.chat-wallpaper {
+  position: relative;
+  background: var(--wa-chat-bg);
+}
+.chat-wallpaper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("/images/bg-chat-room.png") repeat;
+  opacity: var(--wa-chat-pattern-opacity);
+  pointer-events: none;
+}
+html[data-chat-wallpaper="false"] .chat-wallpaper::before {
+  display: none;
+}
+
+/* Bubble tails, like whatsapp-web-ui's MessageGroup: only the first bubble of a run. */
+.bubble-tail-in::before,
+.bubble-tail-out::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+}
+.bubble-tail-in::before {
+  left: -8px;
+  border-top-color: var(--wa-received);
+  border-right-color: var(--wa-received);
+}
+.bubble-tail-out::before {
+  right: -8px;
+  border-top-color: var(--wa-sent);
+  border-left-color: var(--wa-sent);
+}
+
+.thin-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.thin-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+}
+[data-theme="dark"] .thin-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+button, input, select, textarea, [tabindex] {
+  &:focus-visible {
+    outline: 2px solid var(--wa-accent);
+    outline-offset: 3px;
+  }
+}
+
+button:not(:disabled) {
+  cursor: pointer;
+}

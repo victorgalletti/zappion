@@ -1,0 +1,276 @@
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="using:Zappion.Windows" x:Class="Zappion.Windows.MainWindow" Title="Zappion">
+    <Grid x:Name="Shell" Background="{ThemeResource PanelBrush}" RequestedTheme="Default">
+        <Grid.RowDefinitions><RowDefinition Height="38"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+        <!-- Hidden: the F5 accelerator on the root would otherwise show its tooltip on hover anywhere. -->
+        <Grid x:Name="Root" Grid.Row="1" Loaded="OnLoaded" Background="{ThemeResource PanelBrush}" KeyboardAcceleratorPlacementMode="Hidden">
+            <Grid.KeyboardAccelerators>
+                <KeyboardAccelerator Key="K" Modifiers="Control" Invoked="OnListSearch"/><KeyboardAccelerator Key="F" Modifiers="Control" Invoked="OnChatSearch"/><KeyboardAccelerator Key="Escape" Invoked="OnEscape"/>
+                <KeyboardAccelerator Key="F5" Invoked="OnRefreshAccelerator"/>
+            </Grid.KeyboardAccelerators>
+            <Grid x:Name="SignInPanel" Visibility="Collapsed" Background="{ThemeResource LayoutBrush}">
+                <ScrollViewer HorizontalContentAlignment="Stretch" HorizontalScrollMode="Disabled" ZoomMode="Disabled" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" VerticalContentAlignment="Center"><Border x:Name="SignInCard" Width="1152" MaxWidth="1152" HorizontalAlignment="Center" MinHeight="700" Margin="48" CornerRadius="16" BorderThickness="1" BorderBrush="{ThemeResource LineBrush}" Background="{ThemeResource SurfaceBrush}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition x:Name="LoginBrandColumn" Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Border x:Name="LoginBrandPanel" Background="{ThemeResource PanelBrush}" BorderThickness="0,0,1,0" BorderBrush="{ThemeResource LineBrush}" CornerRadius="16,0,0,16" Padding="48">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <Image Source="Assets/Logo.png" Width="40" Height="40"/>
+                                    <TextBlock Text="{local:TextExtension Key=ProductName}" FontSize="20" FontWeight="SemiBold" Foreground="{ThemeResource HeadingBrush}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" VerticalAlignment="Center" Margin="0,48">
+                                    <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,0,0,20"><Ellipse Width="6" Height="6" Fill="{ThemeResource ChatAccentBrush}"/><TextBlock x:Name="OpenSourceLabel" Text="{local:TextExtension Key=OpenSource}" FontSize="12" FontWeight="Medium" CharacterSpacing="100" Foreground="{ThemeResource SubBrush}"/></StackPanel>
+                                    <TextBlock x:Name="LoginHeadline" Text="{local:TextExtension Key=BrandHeadline}" MaxWidth="384" HorizontalAlignment="Left" FontSize="48" LineHeight="60" FontWeight="SemiBold" TextWrapping="Wrap" Foreground="{ThemeResource HeadingBrush}"/>
+                                    <TextBlock x:Name="LoginDescription" Text="{local:TextExtension Key=BrandDescription}" MaxWidth="384" HorizontalAlignment="Left" FontSize="16" LineHeight="26" TextWrapping="Wrap" Foreground="{ThemeResource SubBrush}" Margin="0,20,0,40"/>
+                                    <Border x:Name="LoginDemo" Background="{ThemeResource SurfaceBrush}" BorderBrush="{ThemeResource LineBrush}" BorderThickness="1" CornerRadius="12" Padding="20">
+                                        <StackPanel Spacing="12">
+                                            <Border BorderBrush="{ThemeResource LineBrush}" BorderThickness="0,0,0,1" Padding="0,0,0,16" Margin="0,0,0,8"><StackPanel Orientation="Horizontal" Spacing="10"><Border Width="32" Height="32" Background="{ThemeResource AccentTint10Brush}" CornerRadius="8"><local:LucideIcon Kind="message" Size="17"/></Border><TextBlock Text="{local:TextExtension Key=SharedInbox}" FontSize="14" FontWeight="Medium" Foreground="{ThemeResource HeadingBrush}" VerticalAlignment="Center"/></StackPanel></Border>
+                                            <Border Background="{ThemeResource InputBrush}" CornerRadius="4,12,12,12" BorderBrush="{ThemeResource LineBrush}" BorderThickness="1" Padding="16,12" Margin="0,0,40,0">
+                                                <TextBlock Text="{local:TextExtension Key=CustomerMessage}" TextWrapping="Wrap" FontSize="14" Foreground="{ThemeResource HeadingBrush}"/>
+                                            </Border>
+                                            <Border Background="{ThemeResource AccentTint10Brush}" CornerRadius="12,4,12,12" Padding="16,12" Margin="40,0,0,0">
+                                                <TextBlock Text="{local:TextExtension Key=TeamReply}" TextWrapping="Wrap" FontSize="14" Foreground="{ThemeResource HeadingBrush}"/>
+                                            </Border>
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                                <TextBlock Grid.Row="2" Text="{local:TextExtension Key=OfficialApi}" TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SubBrush}"/>
+                            </Grid>
+                        </Border>
+                        <StackPanel Grid.Column="1" MaxWidth="384" Margin="48,64" VerticalAlignment="Center">
+                            <StackPanel x:Name="LoginCompactBrand" Orientation="Horizontal" Spacing="12" Margin="0,0,0,40" Visibility="Collapsed"><Image Source="Assets/Logo.png" Width="40" Height="40"/><TextBlock Text="{local:TextExtension Key=ProductName}" FontSize="20" FontWeight="SemiBold" VerticalAlignment="Center"/></StackPanel><TextBlock Text="{local:TextExtension Key=Welcome}" FontSize="24" FontWeight="SemiBold" Foreground="{ThemeResource HeadingBrush}"/>
+                            <TextBlock Text="{local:TextExtension Key=SignInDescription}" FontSize="14" TextWrapping="Wrap" Foreground="{ThemeResource SubBrush}" Margin="0,8,0,32"/>
+                            <TextBlock Text="{local:TextExtension Key=Email}" FontSize="14" FontWeight="Medium" Margin="0,0,0,8"/><TextBox x:Name="Email" Height="44" InputScope="EmailSmtpAddress" MinHeight="44" Background="{ThemeResource InputBrush}" Foreground="{ThemeResource HeadingBrush}" BorderBrush="{ThemeResource LineBrush}" CornerRadius="8" FontSize="16"/>
+                            <TextBlock Text="{local:TextExtension Key=Password}" FontSize="14" FontWeight="Medium" Margin="0,20,0,8"/><PasswordBox x:Name="Password" Height="44" KeyDown="OnPasswordKeyDown" MinHeight="44" Margin="0,0,0,20" Background="{ThemeResource InputBrush}" Foreground="{ThemeResource HeadingBrush}" BorderBrush="{ThemeResource LineBrush}" CornerRadius="8" FontSize="16"/>
+                            <Button x:Name="SignInButton" AutomationProperties.Name="{local:TextExtension Key=SignIn}" Style="{StaticResource PlainButton}" Click="OnSignIn" Height="44" CornerRadius="8" HorizontalAlignment="Stretch" Background="{ThemeResource HeadingBrush}" Foreground="{ThemeResource SurfaceBrush}">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Text="{local:TextExtension Key=SignIn}" Foreground="{ThemeResource SurfaceBrush}"/>
+                                    <local:LucideIcon x:Name="SignInArrow" Kind="arrow" Size="16"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Border></ScrollViewer>
+            </Grid>
+            <Grid x:Name="WorkspacePanel" Visibility="Collapsed">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="64"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Border Background="{ThemeResource PanelBrush}">
+                    <Grid Padding="0,16">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel HorizontalAlignment="Center" Spacing="12">
+                            <Button Style="{StaticResource PlainButton}" Click="OnWebSettings" Width="40" Height="40" Margin="0,0,0,8" AutomationProperties.Name="{local:TextExtension Key=Organization}"><local:WebAvatar x:Name="OrganizationAvatar" AvatarSize="32" Width="40" Height="40"/></Button>
+                            <Grid Width="40" Height="40">
+                                <Button x:Name="ChatsButton" Style="{StaticResource PlainButton}" Click="OnChats" Width="40" Height="40" Background="{ThemeResource SurfaceBrush}" AutomationProperties.Name="{local:TextExtension Key=Chats}">
+                                    <local:LucideIcon Kind="chat" Size="20"/>
+                                </Button>
+                                <Border x:Name="ChatsIndicator" Width="3" Height="20" CornerRadius="2" Background="{ThemeResource ChatAccentBrush}" HorizontalAlignment="Left" Margin="-8,0,0,0" IsHitTestVisible="False"/>
+                                <Border x:Name="RailBadge" MinWidth="18" Height="18" CornerRadius="9" Background="{ThemeResource UnreadBadgeBrush}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-4,-4,0" Padding="4,0" Visibility="Collapsed">
+                                    <TextBlock x:Name="RailCount" FontSize="10" FontWeight="SemiBold" Foreground="Black" HorizontalAlignment="Center"/>
+                                </Border>
+                                <Border x:Name="ApprovalBadge" MinWidth="18" Height="18" CornerRadius="9" Background="#f97316" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-4,-4" Padding="4,0" Visibility="Collapsed" IsHitTestVisible="False">
+                                    <TextBlock x:Name="ApprovalCount" FontSize="10" FontWeight="SemiBold" Foreground="White" HorizontalAlignment="Center"/>
+                                </Border>
+                            </Grid>
+                            <Grid Width="40" Height="40"><Button x:Name="ArchivedButton" AutomationProperties.Name="{local:TextExtension Key=Archived}" Style="{StaticResource PlainButton}" Width="40" Height="40" Click="OnArchived"><local:LucideIcon Kind="archive"/></Button><Border x:Name="ArchivedIndicator" Width="3" Height="20" Background="{ThemeResource ChatAccentBrush}" HorizontalAlignment="Left" Margin="-8,0,0,0" Visibility="Collapsed"/>
+                                <Border x:Name="ArchivedBadge" MinWidth="18" Height="18" CornerRadius="9" Background="{ThemeResource UnreadBadgeBrush}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-4,-4,0" Padding="4,0" Visibility="Collapsed"><TextBlock x:Name="ArchivedCount" FontSize="10" FontWeight="SemiBold" Foreground="Black" HorizontalAlignment="Center"/></Border>
+                            </Grid>
+                            <Grid Width="40" Height="40">
+                                <Button x:Name="RailTemplatesButton" Style="{StaticResource PlainButton}" Width="40" Height="40" Click="OnWebTemplates" AutomationProperties.Name="{local:TextExtension Key=Templates}"><local:LucideIcon Kind="layout-template"/></Button>
+                                <Border x:Name="TemplatesIndicator" Width="3" Height="20" CornerRadius="2" Background="{ThemeResource ChatAccentBrush}" HorizontalAlignment="Left" Margin="-8,0,0,0" Visibility="Collapsed" IsHitTestVisible="False"/>
+                            </Grid>
+                            <Grid Width="40" Height="40"><Button x:Name="RailMediaButton" Style="{StaticResource PlainButton}" Width="40" Height="40" Click="OnWebMedia" AutomationProperties.Name="{local:TextExtension Key=Media}"><local:LucideIcon Kind="images"/></Button><Border x:Name="MediaIndicator" Width="3" Height="20" CornerRadius="2" Background="{ThemeResource ChatAccentBrush}" HorizontalAlignment="Left" Margin="-8,0,0,0" Visibility="Collapsed" IsHitTestVisible="False"/></Grid>
+                        </StackPanel>
+                        <StackPanel Grid.Row="2" HorizontalAlignment="Center" Spacing="12">
+                            <Button Style="{StaticResource PlainButton}" Width="40" Height="40" Click="OnWebSettings" AutomationProperties.Name="{local:TextExtension Key=Settings}"><local:LucideIcon Kind="settings"/></Button>
+                            <Button x:Name="ProfileButton" AutomationProperties.Name="{local:TextExtension Key=MyProfile}" Style="{StaticResource PlainButton}" Width="40" Height="40" Click="OnProfile"><local:WebAvatar x:Name="MemberAvatar" AvatarSize="32"/></Button>
+                            <TextBlock x:Name="OrganizationName" Visibility="Collapsed"/><TextBlock x:Name="AgentName" Visibility="Collapsed"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+                <Border Grid.Column="1" CornerRadius="8,0,0,0" BorderThickness="1,1,0,0" BorderBrush="{ThemeResource LineBrush}" Background="{ThemeResource SurfaceBrush}">
+                <Grid x:Name="ContentHost"><Grid x:Name="InboxGrid">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="400"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                    <Border Background="{ThemeResource SurfaceBrush}" BorderBrush="{ThemeResource LineBrush}" BorderThickness="0,0,1,0">
+                        <Grid x:Name="SidebarHost">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="72"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Border BorderBrush="{ThemeResource LineBrush}" BorderThickness="0,0,0,1" Padding="20,0">
+                                <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <StackPanel Orientation="Horizontal" Spacing="12"><Button x:Name="ArchiveBack" AutomationProperties.Name="{local:TextExtension Key=Back}" Visibility="Collapsed" Click="OnChats" Style="{StaticResource PlainButton}"><local:LucideIcon Kind="back"/></Button><TextBlock x:Name="ListTitle" Text="{local:TextExtension Key=Chats}" VerticalAlignment="Center" FontSize="20" FontWeight="SemiBold" Foreground="{ThemeResource HeadingBrush}"/></StackPanel>
+                                    <Button x:Name="NewChatButton" Grid.Column="1" Width="32" Height="32" CornerRadius="16" Background="{ThemeResource ChatAccentBrush}" Foreground="White" Style="{StaticResource PlainButton}" Click="OnNewChat" AutomationProperties.Name="{local:TextExtension Key=NewChat}" ToolTipService.ToolTip="{local:TextExtension Key=NewChat}"><local:LucideIcon x:Name="NewChatIcon" Kind="plus" Size="18"/></Button>
+                                </Grid>
+                            </Border>
+                            <StackPanel Grid.Row="1">
+                                <TextBox x:Name="Search" Style="{StaticResource SearchTextBox}" Height="40" Margin="20,12,20,12" TextChanged="OnFilterChanged" PlaceholderText="{local:TextExtension Key=Search}" AutomationProperties.Name="{local:TextExtension Key=Search}"/>
+                                <StackPanel x:Name="ListFilters" Orientation="Horizontal" Spacing="8" Margin="20,0,20,12">
+                                    <Button x:Name="AllFilter" AutomationProperties.Name="{local:TextExtension Key=All}" BorderThickness="1" Content="{local:TextExtension Key=All}" Style="{StaticResource PlainButton}" Click="OnAllFilter" CornerRadius="16" Padding="12,6" FontSize="12" Foreground="{ThemeResource ChatAccentBrush}"/>
+                                    <Button x:Name="UnreadFilter" AutomationProperties.Name="{local:TextExtension Key=Unread}" BorderThickness="1" Style="{StaticResource PlainButton}" Click="OnUnreadFilter" CornerRadius="16" Padding="12,6" FontSize="12"/>
+                                    <ComboBox x:Name="NumberFilter" AutomationProperties.Name="{local:TextExtension Key=FilterByInstance}" SelectionChanged="OnNumberChanged" DisplayMemberPath="Label" SelectedValuePath="Address" MaxWidth="180" Visibility="Collapsed" MinWidth="100" FontSize="12"/>
+                                </StackPanel>
+                                <Button x:Name="ArchivedRow" AutomationProperties.Name="{local:TextExtension Key=Archived}" Click="OnArchived" Height="56" Margin="8,0,8,4" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Style="{StaticResource PlainButton}" Padding="24,0"><StackPanel Orientation="Horizontal" Spacing="20"><local:LucideIcon x:Name="ArchivedRowIcon" Kind="archive"/><TextBlock x:Name="ArchivedLabel" Text="{local:TextExtension Key=Archived}"/></StackPanel></Button>
+                            </StackPanel>
+                            <ListView x:Name="Conversations" Grid.Row="2" Margin="8,0,8,8" SelectionMode="Single" SelectionChanged="OnConversationSelected" HorizontalContentAlignment="Stretch" ItemContainerStyle="{StaticResource ChatListItem}" Padding="0">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <local:ConversationTile ArchiveRequested="OnArchiveRequested"/>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                            <TextBlock x:Name="EmptyList" Grid.Row="2" TextAlignment="Center" FontSize="14" Text="{local:TextExtension Key=EmptyList}" Visibility="Collapsed" Margin="24" Foreground="{ThemeResource SubBrush}" TextWrapping="Wrap"/>
+                            <Grid x:Name="NewChatPanel" Grid.RowSpan="3" Background="{ThemeResource SurfaceBrush}" Visibility="Collapsed">
+                                <Grid.RowDefinitions><RowDefinition Height="72"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                                <Border BorderBrush="{ThemeResource LineBrush}" BorderThickness="0,0,0,1" Padding="20,0">
+                                    <StackPanel Orientation="Horizontal" Spacing="12"><Button Style="{StaticResource PlainButton}" Width="40" Height="40" Click="OnNewChatBack" AutomationProperties.Name="{local:TextExtension Key=Back}" ToolTipService.ToolTip="{local:TextExtension Key=Back}"><local:LucideIcon Kind="back" Size="20"/></Button><TextBlock Text="{local:TextExtension Key=NewChat}" FontSize="20" FontWeight="SemiBold" Foreground="{ThemeResource HeadingBrush}" VerticalAlignment="Center"/></StackPanel>
+                                </Border>
+                                <StackPanel Grid.Row="1" Padding="24" Spacing="16">
+                                    <StackPanel x:Name="NewChatInstancePanel" Spacing="8"><TextBlock Text="{local:TextExtension Key=SendVia}" FontSize="14" Foreground="{ThemeResource SubBrush}"/><ComboBox x:Name="NewChatInstance" HorizontalAlignment="Stretch" DisplayMemberPath="Label" SelectedValuePath="Address" PlaceholderText="{local:TextExtension Key=ChooseInstance}" AutomationProperties.Name="{local:TextExtension Key=NewChatInstance}" SelectionChanged="OnNewChatInstanceChanged"/></StackPanel>
+                                    <TextBlock x:Name="ConnectNumberNotice" Text="{local:TextExtension Key=ConnectNumber}" TextWrapping="Wrap" FontSize="14" Foreground="{ThemeResource SubBrush}"/>
+                                    <StackPanel Spacing="8"><TextBlock Text="{local:TextExtension Key=PhoneWithCountryCode}" Foreground="{ThemeResource ChatAccentBrush}" FontSize="14"/><TextBox x:Name="NewChatNumber" InputScope="TelephoneNumber" PlaceholderText="5561999999999" AutomationProperties.Name="{local:TextExtension Key=PhoneWithCountryCode}" Style="{StaticResource SettingsTextBox}" TextChanged="OnNewChatNumberChanged" KeyDown="OnNewChatNumberKeyDown"/></StackPanel>
+                                    <TextBlock x:Name="NewChatExplanation" FontSize="12" LineHeight="20" TextWrapping="Wrap" Foreground="{ThemeResource SubBrush}"><Run Text="{local:TextExtension Key=NewChatFirstMessage}"/><Run Text="{local:TextExtension Key=ApprovedTemplate}" FontWeight="Bold"/><Run Text="{local:TextExtension Key=NewChatTestNotice}"/></TextBlock>
+                                    <Button x:Name="OpenNewChatButton" Style="{StaticResource PlainButton}" Background="{ThemeResource ChatAccentBrush}" Foreground="White" CornerRadius="20" Padding="20,8" FontSize="14" FontWeight="Medium" Content="{local:TextExtension Key=OpenChat}" AutomationProperties.Name="{local:TextExtension Key=OpenChat}" IsEnabled="False" Click="OnOpenNewChat"/>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                    <Border x:Name="SelectChat" Grid.Column="1" Background="{ThemeResource UnselectedBrush}" BorderBrush="{ThemeResource ChatAccentBrush}" BorderThickness="0,0,0,6" Padding="40">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="Assets/Logo.png" Width="160" Height="160" Margin="0,0,0,32"/>
+                            <TextBlock Text="{local:TextExtension Key=ProductName}" FontSize="32" FontWeight="Light" Foreground="{ThemeResource HeadingBrush}" HorizontalAlignment="Center"/>
+                            <TextBlock Text="{local:TextExtension Key=EmptyDescription}" FontSize="14" LineHeight="24" MaxWidth="448" TextWrapping="Wrap" TextAlignment="Center" Foreground="{ThemeResource SubBrush}" Margin="0,16,0,40"/>
+                            <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                                <local:LucideIcon Kind="lock" Size="12"/>
+                                <TextBlock Text="{local:TextExtension Key=ConnectedApi}" FontSize="12" Foreground="{ThemeResource SubBrush}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                    <Grid x:Name="ChatPanel" AllowDrop="True" DragOver="OnChatDragOver" Drop="OnChatDrop" Grid.Column="1" Visibility="Collapsed" Background="{ThemeResource ChatBrush}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="72"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Border Background="{ThemeResource SurfaceBrush}" BorderBrush="{ThemeResource LineBrush}" BorderThickness="0,0,0,1" Padding="20,0">
+                            <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                                <local:WebAvatar x:Name="ChatAvatar" AvatarSize="40"/>
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock x:Name="ChatName" FontSize="20" FontWeight="SemiBold" Foreground="{ThemeResource HeadingBrush}"/>
+                                    <StackPanel Orientation="Horizontal"><TextBlock x:Name="ChatPhone" FontSize="12" Foreground="{ThemeResource SubBrush}"/><TextBlock x:Name="WindowStatus" FontSize="12" Foreground="{ThemeResource SubBrush}"/></StackPanel>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                        <Grid Grid.Row="1">
+                            <local:ChatWallpaper x:Name="Wallpaper" IsHitTestVisible="False"/>
+                            <ListView x:Name="MessageList" SelectionMode="None" IsItemClickEnabled="False" Loaded="OnMessagesLoaded" Padding="24,16,24,24" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                <ListView.Header>
+                                    <Border MaxWidth="448" HorizontalAlignment="Center" Background="{ThemeResource NoticeBrush}" CornerRadius="6" Padding="10,6" Margin="0,0,0,12">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <local:LucideIcon Kind="lock" Size="12"/>
+                                            <TextBlock Text="{local:TextExtension Key=ApiNotice}" FontSize="12.32" LineHeight="20" MaxWidth="410" TextWrapping="Wrap" TextAlignment="Center" Foreground="{ThemeResource NoticeTextBrush}"/>
+                                        </StackPanel>
+                                    </Border>
+                                </ListView.Header>
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                        <Setter Property="Padding" Value="0"/>
+                                        <Setter Property="MinHeight" Value="0"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ListViewItem">
+                                                    <ContentPresenter Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" HorizontalContentAlignment="Stretch"/>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <local:MessageBubble/>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                            <Button x:Name="NewMessages" Style="{StaticResource PlainButton}" Width="40" Height="40" CornerRadius="20" Background="{ThemeResource SurfaceBrush}" Click="OnNewMessages" Visibility="Collapsed" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,20,16" AutomationProperties.Name="{local:TextExtension Key=Unread}">
+                                <local:LucideIcon Kind="down" Size="24"/>
+                            </Button>
+                        </Grid>
+                            <Border x:Name="TemplatePickerHost" Grid.Row="1" VerticalAlignment="Bottom" Canvas.ZIndex="30" Visibility="Collapsed" MaxHeight="560" Background="{ThemeResource SurfaceBrush}" CornerRadius="12" BorderThickness="1" BorderBrush="{ThemeResource LineBrush}" Margin="12,0,12,8"/>
+                        <InfoBar x:Name="ChatError" Grid.Row="2" IsOpen="False" Severity="Error" Title="{local:TextExtension Key=ChatError}"/>
+                        <StackPanel Grid.Row="3">
+                            <Grid x:Name="ReplyPanel" Visibility="Collapsed" ColumnSpacing="12" Background="{ThemeResource PanelBrush}" Padding="16,10,16,0">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                <Border BorderThickness="4,0,0,0" BorderBrush="{ThemeResource ChatAccentBrush}" CornerRadius="6" Padding="12,6">
+                                    <StackPanel><TextBlock x:Name="ReplyName" FontSize="12" FontWeight="Medium" Foreground="{ThemeResource ChatAccentBrush}"/><TextBlock x:Name="ReplyText" FontSize="14" MaxLines="1" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource SubBrush}"/></StackPanel>
+                                </Border>
+                                <Button Grid.Column="1" Style="{StaticResource PlainButton}" Width="32" Height="32" AutomationProperties.Name="{local:TextExtension Key=CancelReply}" Click="OnCancelReply"><local:LucideIcon Kind="close" Size="20"/></Button>
+                            </Grid>
+                            <Border x:Name="ClosedComposer" Visibility="Collapsed" CornerRadius="16" Background="{ThemeResource InputBrush}" Margin="12,8,12,12" Padding="16,12" MinHeight="62">
+                                <Grid ColumnSpacing="12"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <TextBlock Text="{local:TextExtension Key=WindowReason}" FontSize="14" TextWrapping="Wrap" Foreground="{ThemeResource SubBrush}" VerticalAlignment="Center"/>
+                                    <Button AutomationProperties.Name="{local:TextExtension Key=Templates}" Grid.Column="1" Content="{local:TextExtension Key=Templates}" Click="OnTemplates" Background="{ThemeResource ChatAccentBrush}" Foreground="White" CornerRadius="22" Padding="16,8"/>
+                                </Grid>
+                            </Border>
+                            <StackPanel x:Name="AttachmentPreview" Visibility="Collapsed" Background="{ThemeResource PanelBrush}" Padding="16,8" Spacing="8">
+                                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled"><StackPanel x:Name="AttachmentStrip" Orientation="Horizontal" Spacing="8"/></ScrollViewer>
+                                <TextBox x:Name="Caption" PlaceholderText="{local:TextExtension Key=AddCaption}" AutomationProperties.Name="{local:TextExtension Key=AddCaption}" PreviewKeyDown="OnComposerKeyDown"/>
+                            </StackPanel>
+                            <Border x:Name="OpenComposer" CornerRadius="26" Background="{ThemeResource InputBrush}" Margin="12,8,12,12" Padding="8,6" MinHeight="52">
+                            <Grid ColumnSpacing="4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                <Button x:Name="TemplatesButton" Click="OnTemplates" Style="{StaticResource PlainButton}" Width="42" Height="42" AutomationProperties.Name="{local:TextExtension Key=Templates}" ToolTipService.ToolTip="{local:TextExtension Key=Templates}"><local:LucideIcon Kind="template" Size="24"/></Button>
+                                <Button x:Name="AttachButton" Style="{StaticResource PlainButton}" Width="42" Height="42" AutomationProperties.Name="{local:TextExtension Key=Attach}"><local:LucideIcon Kind="plus" Size="24"/><Button.Flyout><MenuFlyout><MenuFlyoutItem AutomationProperties.Name="{local:TextExtension Key=Attach}" Text="{local:TextExtension Key=Attach}" Click="OnAttach"/></MenuFlyout></Button.Flyout></Button>
+                                </StackPanel>
+                                <TextBox Grid.Column="1" x:Name="Composer" Paste="OnComposerPaste" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="42" MaxHeight="120" PlaceholderText="{local:TextExtension Key=TypeMessage}" AutomationProperties.Name="{local:TextExtension Key=TypeMessage}" TextChanged="OnComposerChanged" PreviewKeyDown="OnComposerKeyDown" BorderThickness="0" Background="Transparent" Foreground="{ThemeResource HeadingBrush}" FontSize="15.2" Padding="4,10"/>
+                                <Button x:Name="SendButton" Grid.Column="2" Style="{StaticResource PlainButton}" Width="42" Height="42" Click="OnSend" IsEnabled="False" Visibility="Collapsed" VerticalAlignment="Bottom" AutomationProperties.Name="{local:TextExtension Key=Send}">
+                                    <local:LucideIcon Kind="send" Size="24"/>
+                                </Button>
+                                <Button x:Name="MicButton" Grid.Column="2" Style="{StaticResource PlainButton}" Width="42" Height="42" Click="OnRecord" AutomationProperties.Name="{local:TextExtension Key=RecordAudio}"><local:LucideIcon Kind="mic" Size="24"/></Button>
+                                <StackPanel x:Name="RecordingPanel" Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="12" Visibility="Collapsed">
+                                    <Button AutomationProperties.Name="{local:TextExtension Key=Discard}" Content="{local:TextExtension Key=Discard}" Click="OnCancelRecording"/>
+                                    <TextBlock x:Name="RecordingElapsed" VerticalAlignment="Center"/>
+                                    <Button AutomationProperties.Name="{local:TextExtension Key=Send}" Content="{local:TextExtension Key=Send}" Click="OnSendRecording"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                        </StackPanel>
+                    </Grid>
+                </Grid></Grid></Border>
+            </Grid>
+            <TextBlock x:Name="NoOrganization" Text="{local:TextExtension Key=NoOrganization}" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <StackPanel VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,32,0,0" MaxWidth="600">
+                <TextBlock x:Name="Reconnecting" Text="{local:TextExtension Key=Reconnecting}" Visibility="Collapsed" Foreground="{ThemeResource SubBrush}"/>
+                <InfoBar x:Name="ErrorBar" IsOpen="False" IsClosable="False" Severity="Error" Title="{local:TextExtension Key=Error}"/>
+                <Button AutomationProperties.Name="{local:TextExtension Key=Retry}" x:Name="RetryButton" Content="{local:TextExtension Key=Retry}" Click="OnRetry" Visibility="Collapsed"/>
+            </StackPanel>
+            <ProgressBar x:Name="Progress" IsIndeterminate="True" VerticalAlignment="Top" Height="2"/>
+        </Grid>
+        <Grid x:Name="TitleBar" Background="{ThemeResource PanelBrush}">
+            <StackPanel Orientation="Horizontal" Spacing="10" Margin="14,0,150,0" VerticalAlignment="Center" IsHitTestVisible="False">
+                <Image Source="Assets/Favicon.png" Width="18" Height="18"/>
+                <TextBlock Text="{local:TextExtension Key=ProductName}" FontSize="13" Foreground="{ThemeResource HeadingBrush}" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

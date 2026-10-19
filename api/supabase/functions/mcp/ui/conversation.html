@@ -1,0 +1,258 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: AGPL-3.0-only -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Zappion conversation</title>
+    <style>
+    /* inline:base.css */
+    .messages {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 10px 12px;
+      max-height: 420px;
+      overflow-y: auto;
+      background: var(--z-chat);
+    }
+    .older {
+      align-self: center;
+      margin-bottom: 4px;
+      font-size: 12px;
+      background: var(--z-bg);
+      color: var(--z-text-2);
+    }
+    .composer {
+      display: flex;
+      gap: 8px;
+      padding: 8px 12px;
+      background: var(--z-bg-2);
+      border-top: 1px solid var(--z-border);
+    }
+    .composer textarea {
+      resize: none;
+      height: 38px;
+      border-radius: 20px;
+    }
+    .tick-read {
+      color: #53bdeb;
+    }
+    .tick-failed {
+      color: var(--z-danger);
+    }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <div class="head">
+        <div class="avatar" id="avatar">?</div>
+        <div class="title">
+          <strong id="name">Loading…</strong>
+          <span id="phone"></span>
+        </div>
+        <span class="pill" id="window" hidden></span>
+        <button class="ghost" id="refresh" title="Refresh">↻</button>
+      </div>
+      <div class="messages" id="messages">
+        <div class="empty">Loading…</div>
+      </div>
+      <div class="notice" id="notice" hidden></div>
+      <div class="composer" id="composer" hidden>
+        <textarea id="text" placeholder="Type a message" rows="1"></textarea>
+        <button type="button" id="send">Send</button>
+      </div>
+    </div>
+    <script>
+    /* inline:bridge.js */
+    </script>
+    <script>
+    (function () {
+      "use strict";
+      var app = window.McpApp;
+      var args = {};
+      var limit = 20;
+      var $ = function (id) {
+        return document.getElementById(id);
+      };
+
+      function el(tag, className, text) {
+        var node = document.createElement(tag);
+        if (className) node.className = className;
+        if (text !== undefined) node.textContent = text;
+        return node;
+      }
+
+      function notice(text, kind) {
+        var n = $("notice");
+        n.hidden = !text;
+        n.className = "notice " + (kind || "");
+        n.textContent = text || "";
+      }
+
+      // Customer text is untrusted: it only ever goes in textContent.
+      function describe(c) {
+        if (!c) return { body: "" };
+        if (c.type === "text") {
+          return { body: (c.text || "").replace(/\r\n?/g, "\n") };
+        }
+        if (c.type === "file") {
+          var kind = c.kind.charAt(0).toUpperCase() + c.kind.slice(1);
+          return {
+            tag: kind + (c.file && c.file.name ? ": " + c.file.name : ""),
+            body: c.text || "",
+          };
+        }
+        if (c.kind === "template") {
+          return { tag: "Template: " + ((c.data && c.data.name) || "") };
+        }
+        if (c.kind === "reaction") {
+          return { body: (c.data && c.data.unicode) || c.text || "" };
+        }
+        if (c.kind === "location") return { tag: "Location" };
+        if (c.kind === "contacts") return { tag: "Contact card" };
+        return { tag: c.kind || c.type, body: c.text || "" };
+      }
+
+      var TICKS = {
+        pending: ["🕓", ""],
+        held_for_quality_assessment: ["🕓", ""],
+        accepted: ["🕓", ""],
+        rejected: ["⊘", "tick-failed"],
+        sent: ["✓", ""],
+        delivered: ["✓✓", ""],
+        read: ["✓✓", "tick-read"],
+        failed: ["!", "tick-failed"],
+      };
+
+      function render(data) {
+        if (!data) return;
+        if (data.error) {
+          notice(
+            typeof data.error === "string" ? data.error : data.error.message,
+            "error",
+          );
+          return;
+        }
+        var contact = data.contact || {};
+        var title = contact.name || "+" + contact.phone;
+        $("name").textContent = title;
+        $("avatar").textContent = title.replace(/[^\p{L}\p{N}]/gu, "")
+          .charAt(0).toUpperCase() || "?";
+        $("phone").textContent = "+" + contact.phone +
+          (data.account ? " · " + (data.account.name || data.account.phone) : "");
+
+        var open = data.service_window === "open";
+        var pill = $("window");
+        pill.hidden = false;
+        pill.className = "pill " + (open ? "open" : "closed");
+        pill.textContent = open ? "Window open" : "Window closed";
+        pill.title = open && data.closes_at
+          ? "Closes " + new Date(data.closes_at).toLocaleString()
+          : "Only templates can be sent";
+        $("composer").hidden = !open;
+
+        var list = $("messages");
+        list.textContent = "";
+        var messages = data.messages || [];
+        if (messages.length >= limit) {
+          var older = el("button", "older", "Load older messages");
+          older.onclick = function () {
+            limit += 20;
+            refresh();
+          };
+          list.appendChild(older);
+        }
+        if (!messages.length) {
+          list.appendChild(el("div", "empty", "No messages yet."));
+        }
+        messages.forEach(function (m) {
+          var out = m.from === "organization";
+          var bubble = el("div", "bubble" + (out ? " out" : ""));
+          var d = describe(m.content);
+          if (d.tag) bubble.appendChild(el("span", "tag", d.tag));
+          if (d.body) bubble.appendChild(document.createTextNode(d.body));
+          var meta = el("span", "meta", m.time || "");
+          if (out && TICKS[m.status]) {
+            meta.appendChild(document.createTextNode(" "));
+            meta.appendChild(el("span", TICKS[m.status][1], TICKS[m.status][0]));
+          }
+          bubble.appendChild(meta);
+          list.appendChild(bubble);
+        });
+        list.scrollTop = list.scrollHeight;
+      }
+
+      function refresh() {
+        if (!args.contact_phone) return Promise.resolve();
+        $("refresh").disabled = true;
+        return app.callTool("fetch_conversation", {
+          contact_phone: args.contact_phone,
+          account_phone: args.account_phone,
+          limit: limit,
+        }).then(function (data) {
+          notice("");
+          render(data);
+        }).catch(function (err) {
+          notice(err.message, "error");
+        }).finally(function () {
+          $("refresh").disabled = false;
+        });
+      }
+
+      $("refresh").onclick = refresh;
+
+      $("text").addEventListener("keydown", function (e) {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          send();
+        }
+      });
+
+      // No <form>: hosts sandbox the screen, and without allow-forms the
+      // browser never fires submit.
+      function send() {
+        var text = $("text").value.trim();
+        if (!text) return;
+        $("send").disabled = true;
+        app.callTool("send_message", {
+          contact_phone: args.contact_phone,
+          account_phone: args.account_phone,
+          content: { type: "text", text: text },
+        }).then(function (result) {
+          $("text").value = "";
+          var held = result && result.status === "pending_approval";
+          app.updateModelContext(
+            (held ? "Queued for approval" : "Sent") +
+              " from the conversation screen to +" + args.contact_phone +
+              ": " + text,
+          );
+          return refresh().then(function () {
+            if (held) notice("Waiting for a member to approve it.", "ok");
+          });
+        }).catch(function (err) {
+          notice(err.message, "error");
+        }).finally(function () {
+          $("send").disabled = false;
+        });
+      }
+
+      $("send").onclick = send;
+
+      app.on("ui/notifications/tool-input", function (p) {
+        args = p.arguments || {};
+        if (args.limit) limit = args.limit;
+      });
+      app.on("ui/notifications/tool-result", function (p) {
+        render(app.resultData(p));
+      });
+      app.on("ui/notifications/tool-cancelled", function () {
+        notice("Cancelled.", "error");
+      });
+      app.connect("zappion-conversation").catch(function (err) {
+        notice(err.message, "error");
+      });
+    })();
+    </script>
+  </body>
+</html>

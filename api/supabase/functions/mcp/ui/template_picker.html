@@ -1,0 +1,333 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: AGPL-3.0-only -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Zappion template picker</title>
+    <style>
+    /* inline:base.css */
+    .body {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 12px;
+      padding: 12px;
+    }
+    @media (max-width: 560px) {
+      .body {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+    .form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 12px;
+      color: var(--z-text-2);
+    }
+    .preview {
+      padding: 12px;
+      border-radius: 8px;
+      background: var(--z-chat);
+      align-self: start;
+    }
+    .preview .bubble {
+      max-width: 100%;
+    }
+    .preview .header {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .preview .media {
+      display: grid;
+      place-items: center;
+      height: 90px;
+      margin: -2px -4px 6px;
+      border-radius: 6px;
+      background: var(--z-bg-2);
+      color: var(--z-text-2);
+      font-size: 12px;
+    }
+    .preview .footer {
+      margin-top: 4px;
+      font-size: 12px;
+      color: var(--z-text-2);
+    }
+    .preview .buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin-top: 2px;
+    }
+    .preview .buttons div {
+      padding: 8px;
+      text-align: center;
+      border-radius: 8px;
+      background: var(--z-in);
+      color: #027eb5;
+      font-size: 13px;
+    }
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 0 12px 12px;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <div class="head">
+        <div class="avatar" id="avatar">?</div>
+        <div class="title">
+          <strong id="name">Loading…</strong>
+          <span id="phone"></span>
+        </div>
+        <span class="pill" id="window" hidden></span>
+      </div>
+      <div class="body">
+        <div class="form">
+          <label>
+            Template
+            <select id="template" disabled>
+              <option>Loading…</option>
+            </select>
+          </label>
+          <div class="form" id="fields"></div>
+        </div>
+        <div class="preview" id="preview">
+          <div class="empty">Pick a template to see the message.</div>
+        </div>
+      </div>
+      <div class="notice" id="notice" hidden></div>
+      <div class="actions">
+        <button id="send" disabled>Send template</button>
+      </div>
+    </div>
+    <script>
+    /* inline:bridge.js */
+    </script>
+    <script>
+    /* inline:template-kit */
+    </script>
+    <script>
+    (function () {
+      "use strict";
+      var app = window.McpApp;
+      var kit = window.templateKit();
+      var args = {};
+      var data = null;
+      var values = {};
+      var sent = false;
+      var $ = function (id) {
+        return document.getElementById(id);
+      };
+
+      function el(tag, className, text) {
+        var node = document.createElement(tag);
+        if (className) node.className = className;
+        if (text !== undefined) node.textContent = text;
+        return node;
+      }
+
+      function notice(text, kind) {
+        var n = $("notice");
+        n.hidden = !text;
+        n.className = "notice " + (kind || "");
+        n.textContent = text || "";
+      }
+
+      function current() {
+        if (!data) return null;
+        return data.templates[Number($("template").value)] || null;
+      }
+
+      function component(t, type) {
+        return (t.components || []).find(function (c) {
+          return c.type.toUpperCase() === type;
+        });
+      }
+
+      var LABELS = {
+        header: "Header",
+        body: "Body",
+        button: "Button",
+      };
+
+      function renderFields() {
+        var box = $("fields");
+        box.textContent = "";
+        var t = current();
+        if (!t) return;
+        kit.fields(t).forEach(function (f) {
+          var label = el("label");
+          var name = f.component === "button"
+            ? "Button “" + f.name + "”" +
+              (f.kind === "coupon" ? " code" : " link suffix")
+            : f.key === "header:media"
+            ? "Header " + f.kind + " URL (https)"
+            : LABELS[f.component] + " {{" + f.name + "}}";
+          label.appendChild(document.createTextNode(name));
+          var input = el("input");
+          input.type = f.key === "header:media" ? "url" : "text";
+          input.value = values[f.key] || "";
+          if (f.example) input.placeholder = f.example;
+          input.oninput = function () {
+            values[f.key] = input.value;
+            renderPreview();
+          };
+          label.appendChild(input);
+          box.appendChild(label);
+        });
+        if (!box.children.length) {
+          box.appendChild(el("div", "muted", "This template has no variables."));
+        }
+      }
+
+      function renderPreview() {
+        var box = $("preview");
+        box.textContent = "";
+        var t = current();
+        if (!t) return;
+        var bubble = el("div", "bubble");
+        var header = component(t, "HEADER");
+        if (header) {
+          if (header.format && header.format !== "TEXT") {
+            bubble.appendChild(el("div", "media", header.format.toLowerCase()));
+          } else {
+            bubble.appendChild(
+              el("div", "header", kit.fill(header.text, "header", values)),
+            );
+          }
+        }
+        var body = component(t, "BODY");
+        if (body) {
+          bubble.appendChild(
+            document.createTextNode(kit.fill(body.text, "body", values)),
+          );
+        }
+        var footer = component(t, "FOOTER");
+        if (footer) bubble.appendChild(el("div", "footer", footer.text));
+        box.appendChild(bubble);
+        var buttons = component(t, "BUTTONS");
+        if (buttons && buttons.buttons && buttons.buttons.length) {
+          var list = el("div", "buttons");
+          buttons.buttons.forEach(function (b) {
+            list.appendChild(el("div", "", b.text || b.type));
+          });
+          box.appendChild(list);
+        }
+        updateSend();
+      }
+
+      function updateSend() {
+        var t = current();
+        var missing = t ? kit.missing(t, values) : [];
+        $("send").disabled = sent || !t || missing.length > 0;
+        $("send").title = missing.length ? "Fill in every variable first" : "";
+      }
+
+      function render(next) {
+        if (!next) return;
+        if (next.error) {
+          notice(
+            typeof next.error === "string" ? next.error : next.error.message,
+            "error",
+          );
+          return;
+        }
+        data = next;
+        var contact = data.contact || {};
+        var title = contact.name || "+" + contact.phone;
+        $("name").textContent = title;
+        $("avatar").textContent = title.replace(/[^\p{L}\p{N}]/gu, "")
+          .charAt(0).toUpperCase() || "?";
+        $("phone").textContent = "+" + contact.phone +
+          (data.account ? " · " + (data.account.name || data.account.phone) : "");
+        var open = data.service_window === "open";
+        var pill = $("window");
+        pill.hidden = false;
+        pill.className = "pill " + (open ? "open" : "closed");
+        pill.textContent = open ? "Window open" : "Window closed";
+
+        var select = $("template");
+        select.textContent = "";
+        if (!data.templates.length) {
+          select.appendChild(el("option", "", "No approved templates"));
+          select.disabled = true;
+          return;
+        }
+        select.appendChild(el("option", "", "Choose a template…")).value = "";
+        data.templates.forEach(function (t, i) {
+          var option = el(
+            "option",
+            "",
+            t.name + " · " + t.language + " · " + t.category.toLowerCase(),
+          );
+          option.value = String(i);
+          if (data.selected && t.name.toLowerCase() === data.selected) {
+            option.selected = true;
+          }
+          select.appendChild(option);
+        });
+        select.disabled = false;
+        renderFields();
+        renderPreview();
+      }
+
+      $("template").onchange = function () {
+        values = {};
+        notice("");
+        renderFields();
+        renderPreview();
+      };
+
+      $("send").onclick = function () {
+        var t = current();
+        if (!t) return;
+        $("send").disabled = true;
+        notice("");
+        app.callTool("send_message", {
+          contact_phone: args.contact_phone,
+          account_phone: args.account_phone,
+          content: {
+            type: "template",
+            name: t.name,
+            language: t.language,
+            components: kit.build(t, values),
+          },
+        }).then(function (result) {
+          sent = true;
+          var held = result && result.status === "pending_approval";
+          notice(
+            held ? "Waiting for a member to approve it." : "Template sent.",
+            "ok",
+          );
+          app.updateModelContext(
+            "Template " + t.name + " (" + t.language + ") was " +
+              (held ? "queued for approval" : "sent") +
+              " to +" + args.contact_phone + " from the template picker.",
+          );
+        }).catch(function (err) {
+          notice(err.message, "error");
+        }).finally(updateSend);
+      };
+
+      app.on("ui/notifications/tool-input", function (p) {
+        args = p.arguments || {};
+      });
+      app.on("ui/notifications/tool-result", function (p) {
+        render(app.resultData(p));
+      });
+      app.connect("zappion-template-picker").catch(function (err) {
+        notice(err.message, "error");
+      });
+    })();
+    </script>
+  </body>
+</html>

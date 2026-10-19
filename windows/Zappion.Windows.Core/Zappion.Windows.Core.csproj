@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Strings/en-US/Resources.resw" WithCulture="false" LogicalName="Strings/en-US/Resources.resw" />
+    <EmbeddedResource Include="Strings/pt-BR/Resources.resw" WithCulture="false" LogicalName="Strings/pt-BR/Resources.resw" />
+    <InternalsVisibleTo Include="Zappion.Windows.Tests" />
+    <PackageReference Include="Concentus.Oggfile" Version="1.0.7" />
+    <PackageReference Include="Supabase" Version="1.1.1" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
+  </ItemGroup>
+</Project>

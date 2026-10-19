@@ -1,0 +1,34 @@
+{
+  "fmt": {
+    "lineWidth": 80,
+    "indentWidth": 2,
+    "semiColons": true,
+    "singleQuote": false,
+    "proseWrap": "preserve",
+    "exclude": ["_shared/db_types.ts"]
+  },
+  "lint": {
+    "exclude": ["mcp/ui/"],
+    "rules": {
+      "exclude": ["no-unversioned-import", "no-import-prefix"]
+    }
+  },
+  "imports": {
+    "@google/genai": "npm:@google/genai",
+    "@supabase/supabase-js": "npm:@supabase/supabase-js@2.54.0",
+    "ky": "https://esm.sh/ky@1.7",
+    "@libsql/client": "https://esm.sh/@libsql/client@0.15/web",
+    "mathjs": "npm:mathjs@^11.10.0",
+    "mysql2": "npm:mysql2@^3.14.3/promise",
+    "openai": "npm:openai@^5.12.2",
+    "postgres": "npm:postgres@^3.4.7",
+    "zod": "npm:zod@^4.0.9",
+    "ajv": "https://esm.sh/ajv@8.17/dist/2020",
+    "@hono/mcp": "npm:@hono/mcp",
+    "@hono/hono": "jsr:@hono/hono",
+    "openai/resources/chat/completions": "npm:openai@^5.12.2/resources/chat/completions",
+    "@std/encoding/base64url": "jsr:@std/encoding@1.0.10/base64url",
+    "dayjs": "npm:dayjs@^1.11.10",
+    "dayjs/plugin/utc": "npm:dayjs@^1.11.10/plugin/utc.js"
+  }
+}

@@ -1,0 +1,14 @@
+# gitleaks configuration: the default rules plus known false positives.
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Supabase CLI local-development defaults (identical on every machine), test fixtures, XAML brush names, placeholders and bare variable names"
+regexes = [
+  '''sb_secret_N7UND0UgjKTVK-Uodkm0Hg_xSvEMPvz''',
+  '''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIi[A-Za-z0-9_.-]+''',
+  '''zpn_AbC123xy''',
+  '''^[A-Za-z0-9]+Brush$''',
+  '''<[a-z ]+ key>''',
+  '''^[A-Z_]+_KEY=?$''',
+]

@@ -1,0 +1,1286 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+import * as log from "../_shared/logger.ts";
+import { oggOpusDuration } from "../_shared/audio.ts";
+import {
+  type ContactAddressInsert,
+  createUnsecureClient,
+  type Database,
+  type EditedMessage,
+  type IncomingMessage,
+  type MessageInsert,
+  type MetaWebhookPayload,
+  type OrganizationAddressRow,
+  type OutgoingMessage,
+  type WebhookEchoMessage,
+  type WebhookError,
+  type WebhookHistoryMessage,
+  type WebhookIncomingMessage,
+  type WhatsAppOrganizationAddressExtra,
+} from "../_shared/supabase.ts";
+import {
+  fetchMedia,
+  MAX_STORAGE_UPLOAD_SIZE,
+  uploadToStorage,
+} from "../_shared/media.ts";
+import { whatsappToMarkdown } from "../_shared/markdown.ts";
+import {
+  accessTokenFor,
+  resolveApp,
+  type ResolvedApp,
+  signatureMatches,
+} from "../_shared/zappion_whatsapp_credentials.ts";
+
+const API_VERSION = "v24.0";
+
+/**
+ * Queries the database for organization addresses and returns a map.
+ * Fetches first active address per address value (ordered by created_at desc).
+ */
+async function buildOrgAddressMap(
+  client: SupabaseClient<Database>,
+  addresses: string[],
+): Promise<Map<string, OrganizationAddressRow>> {
+  const { data } = await client
+    .from("organizations_addresses")
+    .select()
+    .in("address", addresses)
+    .eq("status", "connected")
+    .eq("service", "whatsapp")
+    .order("created_at", { ascending: false })
+    .throwOnError();
+
+  // Build map, keeping only the first (most recent) address per address value
+  const map = new Map<string, OrganizationAddressRow>();
+
+  for (const row of data) {
+    // Narrow the discriminated union — SELECT filtered to "whatsapp".
+    //if (row.service !== "whatsapp") continue;
+    if (!map.has(row.address)) {
+      map.set(row.address, row);
+    }
+  }
+
+  return map;
+}
+
+/**
+ * Collects all unique organization addresses from a webhook payload.
+ */
+function collectOrgAddresses(payload: MetaWebhookPayload): Array<string> {
+  const addresses = new Set<string>();
+
+  for (const entry of payload.entry) {
+    for (const { value } of entry.changes) {
+      if ("metadata" in value && value.metadata?.phone_number_id) {
+        addresses.add(value.metadata.phone_number_id);
+      }
+    }
+  }
+
+  return Array.from(addresses);
+}
+
+Deno.serve(async (request) => {
+  switch (request.method) {
+    case "GET":
+      return await verifyToken(request);
+    case "POST":
+      return await processMessage(request);
+  }
+
+  return new Response("Method not implemented", { status: 501 });
+});
+
+/**
+ * Meta's subscription handshake. `?app_id=` picks the organization's own App
+ * (and its verify token); without it, WHATSAPP_VERIFY_TOKEN.
+ */
+async function verifyToken(request: Request): Promise<Response> {
+  const params = new URL(request.url).searchParams;
+  const app = await resolveApp(createUnsecureClient(), params.get("app_id"));
+
+  if (!app?.verify_token) {
+    log.warn("No verify token for this webhook (app_id or env)");
+  }
+
+  if (
+    app?.verify_token &&
+    params.get("hub.mode") === "subscribe" &&
+    params.get("hub.verify_token") === app.verify_token
+  ) {
+    return new Response(params.get("hub.challenge"));
+  }
+
+  return new Response("Verification failed, tokens do not match", {
+    status: 403,
+  });
+}
+
+/**
+ * Validates the WhatsApp webhook signature to ensure the request comes from
+ * Meta. Returns the App that signed it, or null when the signature is not
+ * valid for the App named by `?app_id=` (or the first env App without it).
+ */
+async function validateWebhookSignature(
+  request: Request,
+  body: string,
+): Promise<ResolvedApp | null> {
+  const appId = new URL(request.url).searchParams.get("app_id");
+  const app = await resolveApp(createUnsecureClient(), appId);
+
+  if (!app) {
+    log.warn("Unknown Meta App for this webhook", { app_id: appId });
+    return null;
+  }
+
+  const header = request.headers.get("X-Hub-Signature-256");
+
+  if (!header) {
+    log.warn("Missing X-Hub-Signature-256 header");
+    return null;
+  }
+
+  try {
+    if (await signatureMatches(app.app_secret, body, header)) return app;
+    log.warn("Invalid webhook signature", { app_id: app.app_id });
+  } catch (error) {
+    log.error(
+      "Error validating webhook signature",
+      error instanceof Error ? error.message : String(error),
+    );
+  }
+
+  return null;
+}
+
+async function downloadMediaItem({
+  organization_id,
+  access_token,
+  message,
+  client,
+}: {
+  organization_id: string;
+  access_token: string;
+  message: MessageInsert;
+  client: SupabaseClient;
+}): Promise<MessageInsert> {
+  if (message.content.type !== "file") {
+    return message;
+  }
+
+  const media_id = message.content.file.uri;
+  const filename = message.content.file.name;
+
+  // Fetch part 1: Get the download url using the media id
+  const response = await fetch(
+    `https://graph.facebook.com/${API_VERSION}/${media_id}`,
+    {
+      headers: { Authorization: `Bearer ${access_token}` },
+    },
+  );
+
+  if (!response.ok) {
+    throw Error("Could not download media item from WhatsApp servers", {
+      cause: await response.json().catch(() => ({})),
+    });
+  }
+
+  const mediaMetadata = (await response.json()) as {
+    messaging_product: "whatsapp";
+    url: string;
+    mime_type: string;
+    sha256: string;
+    file_size: number;
+    id: string;
+  };
+
+  log.info("Downloading media", {
+    media_id,
+    file_size: mediaMetadata.file_size,
+    mime_type: mediaMetadata.mime_type,
+  });
+
+  message.content.file.size = mediaMetadata.file_size;
+
+  // Check storage upload size limit before downloading
+  if (mediaMetadata.file_size > MAX_STORAGE_UPLOAD_SIZE) {
+    const sizeMB = (mediaMetadata.file_size / (1000 * 1000)).toFixed(1);
+    const limitMB = (MAX_STORAGE_UPLOAD_SIZE / (1000 * 1000)).toFixed(0);
+
+    log.warn("Media file exceeds storage upload limit", {
+      media_id,
+      file_size: mediaMetadata.file_size,
+      limit: MAX_STORAGE_UPLOAD_SIZE,
+    });
+
+    // Preserve message with original WhatsApp media reference and error status
+    message.status = {
+      error: `File too large: ${sizeMB} MB (limit: ${limitMB} MB)`,
+    };
+    return message;
+  }
+
+  // Fetch part 2: Get the file using the download url
+  const file = await fetchMedia(mediaMetadata.url, access_token);
+
+  // Voice notes arrive as Ogg/Opus; their length is in the headers, and
+  // interfaces show it before anyone plays the file.
+  if (mediaMetadata.mime_type.startsWith("audio/ogg")) {
+    const duration = oggOpusDuration(new Uint8Array(await file.arrayBuffer()));
+    if (duration) message.content.file.duration = duration;
+  }
+
+  // Store the file
+  const uri = await uploadToStorage(client, organization_id, file, filename);
+
+  message.content.file.uri = uri; // Overwrite WA media id with the internal uri
+
+  return message;
+}
+
+function webhookMessageToIncomingMessage(
+  message: WebhookIncomingMessage | WebhookEchoMessage | WebhookHistoryMessage,
+): IncomingMessage | undefined {
+  let re_message_id: string | undefined;
+  let forwarded: boolean | undefined;
+
+  // Handle context information for incoming messages
+  if ("context" in message && message.context) {
+    if (message.context.id) {
+      re_message_id = message.context.id;
+    }
+    if (message.context.forwarded || message.context.frequently_forwarded) {
+      forwarded = true;
+    }
+  }
+
+  // Handle reactions - they reference a message differently
+  if (message.type === "reaction") {
+    re_message_id = message.reaction.message_id;
+  }
+
+  const baseMessage = {
+    version: "1" as const,
+    ...(re_message_id && { re_message_id }),
+    ...(forwarded && { forwarded }),
+    ...("referral" in message && { referral: message.referral }),
+    ...("context" in message && message.context?.referred_product &&
+      { referred_product: message.context.referred_product }),
+  };
+
+  switch (message.type) {
+    case "text": {
+      return {
+        ...baseMessage,
+        type: "text",
+        kind: "text",
+        text: whatsappToMarkdown(message.text.body),
+      };
+    }
+
+    case "reaction": {
+      // Cross-service reaction shape (see ReactionPart), data-only;
+      // removals carry no emoji on WhatsApp (single reaction per user),
+      // hence no name/unicode then.
+      const emoji = message.reaction.emoji;
+      return {
+        ...baseMessage,
+        type: "data",
+        kind: "reaction",
+        data: emoji
+          ? { action: "added", name: emoji, unicode: emoji }
+          : { action: "removed" },
+      };
+    }
+
+    case "audio": {
+      return {
+        ...baseMessage,
+        type: "file",
+        kind: "audio",
+        file: {
+          mime_type: message.audio.mime_type,
+          uri: message.audio.id, // Will be replaced with internal URI after download
+          size: 0, // Will be updated after download
+        },
+      };
+    }
+
+    case "image": {
+      return {
+        ...baseMessage,
+        type: "file",
+        kind: "image",
+        file: {
+          mime_type: message.image.mime_type,
+          uri: message.image.id, // Will be replaced with internal URI after download
+          size: 0, // Will be updated after download
+        },
+        ...(message.image.caption &&
+          { text: whatsappToMarkdown(message.image.caption) }),
+      };
+    }
+
+    case "video": {
+      return {
+        ...baseMessage,
+        type: "file",
+        kind: "video",
+        file: {
+          mime_type: message.video.mime_type,
+          uri: message.video.id, // Will be replaced with internal URI after download
+          name: message.video.filename,
+          size: 0, // Will be updated after download
+        },
+        ...(message.video.caption &&
+          { text: whatsappToMarkdown(message.video.caption) }),
+      };
+    }
+
+    case "document": {
+      return {
+        ...baseMessage,
+        type: "file",
+        kind: "document",
+        file: {
+          mime_type: message.document.mime_type,
+          uri: message.document.id, // Will be replaced with internal URI after download
+          name: message.document.filename,
+          size: 0, // Will be updated after download
+        },
+        ...(message.document.caption &&
+          { text: whatsappToMarkdown(message.document.caption) }),
+      };
+    }
+
+    case "sticker": {
+      return {
+        ...baseMessage,
+        type: "file",
+        kind: "sticker",
+        file: {
+          mime_type: message.sticker.mime_type,
+          uri: message.sticker.id, // Will be replaced with internal URI after download
+          size: 0, // Will be updated after download
+        },
+      };
+    }
+
+    case "contacts": {
+      return {
+        ...baseMessage,
+        type: "data",
+        kind: "contacts",
+        data: message.contacts,
+      };
+    }
+
+    case "location": {
+      return {
+        ...baseMessage,
+        type: "data",
+        kind: "location",
+        data: message.location,
+      };
+    }
+
+    case "order": {
+      return {
+        ...baseMessage,
+        type: "data",
+        kind: "order",
+        data: message.order,
+      };
+    }
+
+    case "interactive": {
+      return {
+        ...baseMessage,
+        type: "data",
+        kind: "interactive",
+        data: message.interactive,
+      };
+    }
+
+    case "button": {
+      return {
+        ...baseMessage,
+        type: "data",
+        kind: "button",
+        data: message.button,
+      };
+    }
+
+    case "media_placeholder": {
+      return {
+        ...baseMessage,
+        type: "data",
+        kind: "media_placeholder",
+        data: {},
+      };
+    }
+
+    case "unsupported":
+      return {
+        ...baseMessage,
+        type: "data",
+        kind: "unsupported",
+        data: message.unsupported,
+      };
+
+    case "system": {
+      // System messages (user_changed_number / user_changed_user_id) announce a
+      // phone-number / BSUID change. No-op: we never re-key here. Identifier
+      // relinking is driven by the user_id_update webhook. Log for visibility.
+      log.info("System message (no-op)", message);
+      break;
+    }
+
+    case "errors":
+    default: {
+      // System and unsupported messages are not converted to IncomingMessage
+      // They should be handled separately or filtered out before calling this function
+      log.warn(
+        `Message type "${message.type}" cannot be converted to IncomingMessage`,
+        message,
+      );
+    }
+  }
+}
+
+/**
+ * Extracts the new text/caption from an edited message. WhatsApp only allows
+ * editing text bodies and media captions, so that is the only field that can
+ * change; returns undefined for message types we do not edit in place.
+ */
+function extractEditedText(message: EditedMessage): string | undefined {
+  switch (message.type) {
+    case "text":
+      return whatsappToMarkdown(message.text.body);
+    case "image":
+      return message.image.caption
+        ? whatsappToMarkdown(message.image.caption)
+        : "";
+    case "video":
+      return message.video.caption
+        ? whatsappToMarkdown(message.video.caption)
+        : "";
+    case "document":
+      return message.document.caption
+        ? whatsappToMarkdown(message.document.caption)
+        : "";
+    default:
+      return undefined;
+  }
+}
+
+async function processMessage(request: Request): Promise<Response> {
+  const body = await request.text();
+
+  // Validate that the request comes from Meta
+  const signedBy = await validateWebhookSignature(request, body);
+
+  if (!signedBy) {
+    // Return 200 to prevent Meta from retrying. Common cause: the user deleted
+    // their org but didn't remove the webhook from their Meta app configuration.
+    return new Response();
+  }
+
+  const client = createUnsecureClient();
+
+  const payload = JSON.parse(body) as MetaWebhookPayload;
+
+  if (payload.object !== "whatsapp_business_account") {
+    return new Response("Unexpected object", { status: 400 });
+  }
+
+  // Collect all unique organization addresses and build lookup map
+  const uniqueOrgAddresses = collectOrgAddresses(payload);
+  const orgAddressMap = await buildOrgAddressMap(client, uniqueOrgAddresses);
+
+  // An organization's own App may only write to that organization's numbers:
+  // its admin holds the App Secret, so without this they could sign payloads
+  // for another organization's phone_number_id.
+  const scopedOrganization = signedBy.organization_id;
+  if (scopedOrganization) {
+    for (const [address, row] of orgAddressMap) {
+      if (row.organization_id !== scopedOrganization) {
+        log.warn("Ignoring a number outside the App's organization", {
+          app_id: signedBy.app_id,
+          address,
+        });
+        orgAddressMap.delete(address);
+      }
+    }
+  }
+
+  const messages: MessageInsert[] = [];
+  const statuses: MessageInsert[] = [];
+  const contacts_addresses: ContactAddressInsert[] = [];
+  // Coexistence edit/revoke events modify existing rows by their ORIGINAL id,
+  // so they are applied as UPDATEs after the upserts rather than batched.
+  const edits: {
+    original_message_id: string;
+    text: string;
+    timestamp: string;
+  }[] = [];
+  const revokes: { original_message_id: string; timestamp: string }[] = [];
+
+  for (const entry of payload.entry) {
+    const waba_id = entry.id; // WhatsApp business account ID (WABA ID)
+
+    for (const { value, field } of entry.changes) {
+      log.info(`WhatsApp ${field} payload`, value);
+
+      if (field === "account_update") {
+        // Query directly since account_update events do not populate orgAddressMap
+        let accountQuery = client
+          .from("organizations_addresses")
+          .select()
+          .eq("extra->>waba_id", waba_id);
+        if (scopedOrganization) {
+          accountQuery = accountQuery.eq("organization_id", scopedOrganization);
+        }
+        const { data: address } = await accountQuery
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle()
+          .throwOnError();
+
+        if (!address?.organization_id) {
+          log.warn(
+            "Could not log account update payload: No organization found for WABA",
+            value,
+          );
+          continue;
+        }
+
+        log.info("Account update event", {
+          organization_id: address.organization_id,
+          event: value.event,
+          waba_id,
+        });
+
+        await client
+          .from("logs")
+          .insert({
+            organization_id: address.organization_id,
+            category: "account_update",
+            service: "whatsapp",
+            level: "info",
+            message: value.event.toLocaleLowerCase(),
+            metadata: { waba_id, value },
+          })
+          .throwOnError();
+
+        // Coexistence lifecycle: PARTNER_REMOVED and ACCOUNT_OFFBOARDED
+        // disconnect the address; ACCOUNT_RECONNECTED re-enables it after the
+        // client re-onboards (device switch, reinstall, or re-registration).
+        const nextStatus = value.event === "PARTNER_REMOVED" ||
+            value.event === "ACCOUNT_OFFBOARDED"
+          ? "disconnected"
+          : value.event === "ACCOUNT_RECONNECTED"
+          ? "connected"
+          : null;
+
+        if (nextStatus) {
+          log.info(`Account ${value.event}, setting address status`, {
+            status: nextStatus,
+            waba_id,
+          });
+
+          await client
+            .from("organizations_addresses")
+            .update({ status: nextStatus })
+            .eq("organization_id", address.organization_id)
+            .eq("extra->>waba_id", waba_id)
+            .throwOnError();
+        }
+      }
+
+      // A user's BSUID changed (previous → current), e.g. after a phone-number
+      // change. We never re-key an address: instead mark the old address(es)
+      // inactive and leave a `replaced_by_bsuid` trail. The new address is
+      // created naturally by the first message under the new identity (phone- or
+      // bsuid-keyed) and linked back to the same contact via that trail.
+      if (field === "user_id_update") {
+        const org = orgAddressMap.get(value.metadata.phone_number_id);
+
+        if (!org) {
+          log.warn("user_id_update: no organization for phone number", value);
+          continue;
+        }
+
+        for (const update of value.user_id_update) {
+          const { previous, current } = update.user_id;
+
+          const { count } = await client
+            .from("contacts_addresses")
+            .update({
+              status: "inactive",
+              extra: { replaced_by_bsuid: current },
+            }, { count: "exact" })
+            .eq("organization_id", org.organization_id)
+            .eq("status", "active")
+            .eq("extra->>bsuid", previous)
+            .throwOnError();
+
+          log.info("user_id_update: deactivated old addresses", {
+            organization_id: org.organization_id,
+            previous,
+            current,
+            count,
+          });
+        }
+        continue;
+      }
+
+      if (!("metadata" in value)) {
+        continue;
+      }
+
+      const errors: Omit<WebhookError, "href">[] = [];
+
+      const orgAddressRow = orgAddressMap.get(value.metadata!.phone_number_id); // WhatsApp business account phone number id
+
+      if (!orgAddressRow) {
+        log.warn("No organization address");
+        continue;
+      }
+
+      // TODO: whatsapp coexistence privacy feature: skip storing messages from stored contacts
+
+      const organization_id = orgAddressRow.organization_id;
+      const organization_address = orgAddressRow.address;
+
+      if (
+        (field === "messages" || field === "smb_message_echoes" ||
+          field === "history") && "contacts" in value
+      ) {
+        // Both incoming and status (sent/delivered/read) payloads carry contacts;
+        // status contacts is optional (omitted for failed), hence `?? []`.
+        for (const contact of value.contacts ?? []) {
+          contacts_addresses.push({
+            organization_id,
+            organization_address,
+            address: contact.wa_id ?? contact.user_id,
+            service: "whatsapp",
+            extra: {
+              name: contact.profile?.name,
+              username: contact.profile?.username,
+              phone_number: contact.wa_id,
+              bsuid: contact.user_id,
+              address_type: contact.wa_id ? "phone" : "bsuid",
+            },
+          });
+        }
+      }
+
+      if (
+        (field === "messages" || field === "history") && "messages" in value
+      ) {
+        for (const webhookMessage of value.messages ?? []) {
+          // Payload-literal keying: prefer the phone number, fall back to the
+          // BSUID (present only-phone-less for username users). The conversation
+          // is created/looked up on this address and never re-keyed.
+          const contact_address = webhookMessage.from ??
+            webhookMessage.from_user_id;
+
+          if (webhookMessage.type === "errors") {
+            errors.push(...webhookMessage.errors);
+            continue;
+          }
+
+          // ---- Revoke (deletion): merge a `deleted` status onto the original
+          // row. Coexistence-only event.
+          if (webhookMessage.type === "revoke") {
+            revokes.push({
+              original_message_id: webhookMessage.revoke.original_message_id,
+              timestamp: new Date(webhookMessage.timestamp * 1000)
+                .toISOString(),
+            });
+            continue;
+          }
+
+          // ---- Edit: replace the text/caption of the original row in place.
+          // Coexistence-only event. WhatsApp only lets users edit text or media
+          // captions, so the media itself is unchanged — update just the text
+          // leaf (merged in) and leave the stored file alone.
+          if (webhookMessage.type === "edit") {
+            const text = extractEditedText(webhookMessage.edit.message);
+            if (text === undefined) {
+              log.warn(
+                "Unsupported edited message type",
+                webhookMessage.edit.message,
+              );
+              continue;
+            }
+            edits.push({
+              original_message_id: webhookMessage.edit.original_message_id,
+              text,
+              timestamp: new Date(webhookMessage.timestamp * 1000)
+                .toISOString(),
+            });
+            continue;
+          }
+
+          const content = webhookMessageToIncomingMessage(webhookMessage);
+
+          if (!content) {
+            continue;
+          }
+
+          const message = {
+            organization_id,
+            // id is the internal (aka surrogate) identifier given by the DB, while
+            // external_id is the one given by the service, such as the WhatsApp message id (WAMID)
+            external_id: webhookMessage.id,
+            service: "whatsapp" as const,
+            organization_address,
+            // Direct chats only on WhatsApp Cloud: the contact is both the
+            // conversation's peer and the author.
+            conversation_address: contact_address,
+            sender_address: contact_address,
+            content,
+            // A history media asset describes a message that already
+            // happened: stating `pending` null leaves it unarmed, so neither
+            // agent-client nor the media preprocessor wakes for a backfill.
+            // The threaded replay fills in its delivery status. A live
+            // message takes the column default, the arm bit.
+            ...(field === "history" && { status: { pending: null } }),
+            timestamp: new Date(webhookMessage.timestamp * 1000).toISOString(),
+          };
+
+          messages.push(message);
+        }
+      }
+
+      if (field === "messages" && "statuses" in value) {
+        for (const status of value.statuses) {
+          statuses.push({
+            organization_id:
+              orgAddressMap.get(organization_address)!.organization_id,
+            external_id: status.id,
+            service: "whatsapp",
+            organization_address,
+            conversation_address: status.recipient_id ??
+              status.recipient_user_id,
+            content: {} as OutgoingMessage, // this will get merged (it won't overwrite)
+            status: {
+              [status.status]: new Date(
+                parseInt(status.timestamp) * 1000,
+              ).toISOString(),
+              errors: status.errors,
+            },
+          });
+        }
+      }
+
+      if (field === "messages" && "errors" in value) {
+        for (const error of value.errors) {
+          log.error("WhatsApp messages error", {
+            organization_id,
+            organization_address,
+            error_code: error.code,
+            error_title: error.title,
+          });
+
+          await client
+            .from("logs")
+            .insert({
+              organization_id,
+              organization_address,
+              category: "messages",
+              service: "whatsapp",
+              level: "error",
+              message: error.message,
+              metadata: error,
+            })
+            .throwOnError();
+        }
+      }
+
+      if (
+        (field === "smb_message_echoes" || field === "history") &&
+        "message_echoes" in value
+      ) {
+        for (const webhookMessage of value.message_echoes ?? []) {
+          const contact_address = webhookMessage.to ??
+            webhookMessage.to_user_id;
+
+          if (webhookMessage.type === "errors") {
+            errors.push(...webhookMessage.errors);
+            continue;
+          }
+
+          // ---- Revoke (deletion) by the business customer via the WhatsApp
+          // Business app: merge a `deleted` status onto the original row, same
+          // as an incoming revoke (applied below, keyed by external_id).
+          if (webhookMessage.type === "revoke") {
+            revokes.push({
+              original_message_id: webhookMessage.revoke.original_message_id,
+              timestamp: new Date(webhookMessage.timestamp * 1000)
+                .toISOString(),
+            });
+            continue;
+          }
+
+          // ---- Edit by the business customer via the WhatsApp Business app:
+          // replace the text/caption of the original row, same as an incoming
+          // edit (applied below, keyed by external_id).
+          if (webhookMessage.type === "edit") {
+            const text = extractEditedText(webhookMessage.edit.message);
+            if (text === undefined) {
+              log.warn(
+                "Unsupported edited message type",
+                webhookMessage.edit.message,
+              );
+              continue;
+            }
+            edits.push({
+              original_message_id: webhookMessage.edit.original_message_id,
+              text,
+              timestamp: new Date(webhookMessage.timestamp * 1000)
+                .toISOString(),
+            });
+            continue;
+          }
+
+          const content = webhookMessageToIncomingMessage(webhookMessage);
+
+          if (!content) {
+            continue;
+          }
+
+          const message = {
+            organization_id,
+            // id is the internal (aka surrogate) identifier given by the DB, while
+            // external_id is the one given by the service, such as the WhatsApp message id (WAMID)
+            external_id: webhookMessage.id,
+            service: "whatsapp" as const,
+            organization_address,
+            conversation_address: contact_address,
+            content: content as OutgoingMessage, // Incoming are a superset of outgoing, except for templates
+            status: {
+              sent: new Date(webhookMessage.timestamp * 1000).toISOString(),
+              // Replayed by the history sync, so the same disarming applies as
+              // in the threads branch below: the live echo may already have
+              // minted the row with the default arm bit.
+              ...(field === "history" && { pending: null }),
+            },
+            timestamp: new Date(webhookMessage.timestamp * 1000).toISOString(),
+          };
+
+          messages.push(message);
+        }
+      }
+
+      if (field === "history" && "history" in value) {
+        for (const history of value.history) {
+          if ("threads" in history) {
+            const convCount = history.threads.length;
+            const msgCount = history.threads.reduce(
+              (acc, thread) => acc + thread.messages.length,
+              0,
+            );
+
+            log.info("History sync (threaded)", {
+              organization_id,
+              organization_address,
+              conversations: convCount,
+              messages: msgCount,
+            });
+
+            await client
+              .from("logs")
+              .insert({
+                organization_id,
+                organization_address,
+                category: "history",
+                service: "whatsapp",
+                level: "info",
+                message:
+                  `Syncing ${convCount} conversations and ${msgCount} messages`,
+                metadata: history.metadata,
+              })
+              .throwOnError();
+
+            for (const thread of history.threads) {
+              // The thread's context identifies the contact for the whole
+              // conversation (phone preferred, BSUID fallback). Register the
+              // address and key every message in the thread to it.
+              const contact_address = thread.context.wa_id ??
+                thread.context.user_id;
+
+              contacts_addresses.push({
+                organization_id,
+                organization_address,
+                address: contact_address,
+                service: "whatsapp",
+                extra: {
+                  username: thread.context.username,
+                  phone_number: thread.context.wa_id,
+                  bsuid: thread.context.user_id,
+                  address_type: thread.context.wa_id ? "phone" : "bsuid",
+                },
+              });
+
+              for (const webhookMessage of thread.messages) {
+                // Echoes (business → user) carry a recipient; incoming messages
+                // (user → business) do not.
+                const isEcho = "to" in webhookMessage ||
+                  "to_user_id" in webhookMessage;
+
+                if (webhookMessage.type === "errors") {
+                  errors.push(...webhookMessage.errors);
+                  continue;
+                }
+
+                // Edits/revokes can appear in history too (coexistence). Merge
+                // them onto the original row by external_id, same as the live
+                // and echo paths — otherwise they hit webhookMessageToIncoming-
+                // Message's default branch and get dropped with a warning.
+                if (webhookMessage.type === "revoke") {
+                  revokes.push({
+                    original_message_id:
+                      webhookMessage.revoke.original_message_id,
+                    timestamp: new Date(webhookMessage.timestamp * 1000)
+                      .toISOString(),
+                  });
+                  continue;
+                }
+
+                if (webhookMessage.type === "edit") {
+                  const text = extractEditedText(webhookMessage.edit.message);
+                  if (text === undefined) {
+                    log.warn(
+                      "Unsupported edited message type",
+                      webhookMessage.edit.message,
+                    );
+                    continue;
+                  }
+                  edits.push({
+                    original_message_id:
+                      webhookMessage.edit.original_message_id,
+                    text,
+                    timestamp: new Date(webhookMessage.timestamp * 1000)
+                      .toISOString(),
+                  });
+                  continue;
+                }
+
+                const content = webhookMessageToIncomingMessage(webhookMessage);
+
+                if (!content) {
+                  continue;
+                }
+
+                const historyStatusMap = {
+                  read: "read",
+                  delivered: "delivered",
+                  sent: "sent",
+                  error: "failed",
+                  played: "read",
+                  pending: "accepted",
+                };
+
+                const originalStatus = webhookMessage.history_context.status
+                  .toLowerCase() as keyof typeof historyStatusMap;
+
+                const status = historyStatusMap[originalStatus] ||
+                  originalStatus;
+
+                // Coexistence overlaps: a message recent enough to arrive live
+                // (`messages`/`smb_message_echoes`) is ALSO replayed by the
+                // history sync. The live row is minted first and takes the
+                // column default `{pending: now()}` — the arm bit — and the
+                // history row that follows only merges its own key in, leaving
+                // `pending` set on a message that was delivered months ago.
+                // That is what woke the dispatcher and agent-client on a
+                // backfill. A null in a merge patch REMOVES the key
+                // (merge_update_jsonb, RFC 7396), so stating it here disarms
+                // the row the sync is describing as already-happened.
+                const historyStatus = {
+                  [status]: new Date(webhookMessage.timestamp * 1000)
+                    .toISOString(),
+                  pending: null,
+                };
+
+                const message = isEcho
+                  ? {
+                    organization_id,
+                    // id is the internal (aka surrogate) identifier given by the DB, while
+                    // external_id is the one given by the service, such as the WhatsApp message id (WAMID)
+                    external_id: webhookMessage.id,
+                    service: "whatsapp" as const,
+                    organization_address,
+                    conversation_address: contact_address,
+                    content: content as OutgoingMessage, // Incoming is a superset of outgoing, except for templates
+                    status: historyStatus,
+                    timestamp: new Date(
+                      webhookMessage.timestamp * 1000,
+                    ).toISOString(),
+                  }
+                  : {
+                    organization_id,
+                    // id is the internal (aka surrogate) identifier given by the DB, while
+                    // external_id is the one given by the service, such as the WhatsApp message id (WAMID)
+                    external_id: webhookMessage.id,
+                    service: "whatsapp" as const,
+                    organization_address,
+                    conversation_address: contact_address,
+                    sender_address: contact_address,
+                    content, // Incoming is a superset of outgoing, except for templates
+                    status: historyStatus,
+                    timestamp: new Date(
+                      webhookMessage.timestamp * 1000,
+                    ).toISOString(),
+                  };
+
+                messages.push(message);
+              }
+            }
+          }
+
+          if ("errors" in history) {
+            for (const error of history.errors) {
+              log.error("History sync error", {
+                organization_id,
+                organization_address,
+                error_code: error.code,
+                error_message: error.message,
+              });
+
+              await client
+                .from("logs")
+                .insert({
+                  organization_id,
+                  organization_address,
+                  category: "history",
+                  service: "whatsapp",
+                  level: "error",
+                  message: error.message,
+                  metadata: error,
+                })
+                .throwOnError();
+            }
+          }
+        }
+      }
+
+      if (field === "smb_app_state_sync") {
+        for (const syncItem of value.state_sync) {
+          if (syncItem.type === "contact") {
+            contacts_addresses.push({
+              organization_id,
+              organization_address,
+              address: syncItem.contact.phone_number ??
+                syncItem.contact.user_id,
+              service: "whatsapp" as const,
+              extra: {
+                phone_number: syncItem.contact.phone_number,
+                bsuid: syncItem.contact.user_id,
+                address_type: syncItem.contact.phone_number ? "phone" : "bsuid",
+                username: syncItem.contact.username,
+                synced: {
+                  name: syncItem.contact.full_name,
+                  action: syncItem.action,
+                },
+              },
+            });
+          }
+        }
+      }
+
+      if (errors.length > 0) {
+        const errorCounts = errors.reduce(
+          (acc, curr) => {
+            const code = curr.code;
+
+            if (!acc[code]) {
+              acc[code] = { count: 0, error: curr };
+            }
+
+            acc[code].count += 1;
+
+            return acc;
+          },
+          {} as Record<
+            string,
+            { count: number; error: Omit<WebhookError, "href"> }
+          >,
+        );
+
+        for (const { count, error } of Object.values(errorCounts)) {
+          log.warn(`Received ${count} error messages with code ${error.code}`, {
+            organization_id,
+            organization_address,
+            error_code: error.code,
+            error_message: error.message,
+          });
+
+          await client
+            .from("logs")
+            .insert({
+              organization_id,
+              organization_address,
+              category: field,
+              service: "whatsapp",
+              level: "error",
+              message:
+                `Received ${count} error messages with code ${error.code}`,
+              metadata: error,
+            })
+            .throwOnError();
+        }
+      }
+    }
+  }
+
+  const orgSummary = Array.from(orgAddressMap.entries()).map((
+    [address, row],
+  ) => ({
+    organization_id: row.organization_id,
+    organization_address: address,
+    waba_id: (row.extra as WhatsAppOrganizationAddressExtra)?.waba_id,
+  }));
+
+  log.info("Webhook processing summary", {
+    messages: messages.length,
+    statuses: statuses.length,
+    edits: edits.length,
+    revokes: revokes.length,
+    contacts_addresses: contacts_addresses.length,
+    organizations: orgSummary,
+  });
+
+  const downloadMediaPromise = Promise.all(
+    messages.map(async (message) => {
+      const orgAddress = orgAddressMap.get(message.organization_address)!;
+
+      try {
+        return await downloadMediaItem({
+          organization_id: orgAddress.organization_id,
+          access_token: await accessTokenFor(
+            client,
+            orgAddress.organization_id,
+            orgAddress.address,
+          ),
+          message,
+          client,
+        });
+      } catch (error) {
+        log.warn(
+          "Failed to download media, preserving message with original reference",
+          {
+            error: error instanceof Error ? error.message : String(error),
+            message_id: message.external_id,
+          },
+        );
+
+        message.status = {
+          error: error instanceof Error ? error.message : String(error),
+        };
+        return message;
+      }
+    }),
+  );
+
+  if (contacts_addresses.length > 0) {
+    // Deduplicate by the PK: Meta may send the same contact multiple times in
+    // one payload (e.g. accumulated state sync events). PostgreSQL's ON
+    // CONFLICT cannot affect the same row twice in a single statement. Keep
+    // the last entry — most recent event wins.
+    const dedupedContactsAddresses = Array.from(
+      new Map(
+        contacts_addresses.map((ca) => [
+          `${ca.organization_id}|${ca.organization_address}|${ca.address}|${ca.service}`,
+          ca,
+        ]),
+      ).values(),
+    );
+
+    const { error: contactsError } = await client
+      .from("contacts_addresses")
+      .upsert(dedupedContactsAddresses);
+
+    if (contactsError) {
+      log.error("Failed to upsert contacts_addresses", {
+        error: contactsError,
+        organizations: orgSummary,
+        contacts_addresses: dedupedContactsAddresses,
+      });
+      throw contactsError;
+    }
+
+    log.info("Persisted contacts_addresses", {
+      count: contacts_addresses.length,
+    });
+  }
+
+  // Notes for statuses:
+  // 1. Upsert is needed because there is no bulk update
+  // 2. Insert operation is not expected, because statuses come
+  //    after outgoing messages are inserted
+  // 3. Only the `status` field should be updated based on external_id,
+  //    but upsert requires records to be prepared for insertion (which won't happen)
+  // 4. `content` field is set to empty object {}, it will be merged
+  //    with existing content during update (inocuous)
+
+  // Notes for messages:
+  // Download media before upserting incoming messages
+  // Patched messages include media local id and file size
+  const patchedMessages = await downloadMediaPromise;
+
+  // A status row (content `{}`) and a message row can carry the same
+  // external_id within one webhook (e.g. an echo plus a status/edit/revoke for
+  // the same WAMID). We upsert statuses and messages in two separate statements
+  // rather than deduping: Postgres' ON CONFLICT cannot affect the same row twice
+  // in one statement, and a last-wins dedup would drop the complementary half
+  // (content vs status) that the merge trigger is meant to combine.
+  const upsertBatch = async (label: string, rows: MessageInsert[]) => {
+    if (rows.length === 0) return;
+
+    const { error } = await client
+      .from("messages")
+      .upsert(rows, { onConflict: "external_id" });
+
+    if (error) {
+      log.error(`Failed to upsert ${label}`, {
+        error,
+        organizations: orgSummary,
+        count: rows.length,
+      });
+      throw error;
+    }
+
+    log.info(`Persisted ${label}`, { count: rows.length });
+  };
+
+  await upsertBatch("statuses", statuses);
+  await upsertBatch("messages", patchedMessages);
+
+  // Apply edits and revokes as in-place updates keyed by the ORIGINAL message
+  // id (not the event's own id). They modify existing rows, so an UPDATE lets
+  // the content/status merge triggers run without clobbering the row's
+  // direction; if we never stored the original, the update matches no rows (you
+  // cannot edit or delete a message we do not have). Run after the upserts so an
+  // original delivered in the same webhook already exists.
+  for (const { original_message_id, text, timestamp } of edits) {
+    await client
+      .from("messages")
+      .update({ content: { text }, status: { edited: timestamp } })
+      .eq("external_id", original_message_id)
+      .throwOnError();
+  }
+
+  for (const { original_message_id, timestamp } of revokes) {
+    await client
+      .from("messages")
+      .update({ status: { deleted: timestamp } })
+      .eq("external_id", original_message_id)
+      .throwOnError();
+  }
+
+  return new Response();
+}

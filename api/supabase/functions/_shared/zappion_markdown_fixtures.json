@@ -1,0 +1,48 @@
+{
+  "_comment": "Shared by zappion_markdown_test.ts (backend, _shared/markdown.ts) and web/lib/markdown.test.ts (web/lib/markdown.ts) so both sides convert the same way. Pairs are [input, expected].",
+  "markdownToWhatsApp": [
+    ["**bold**", "*bold*"],
+    ["__bold__", "*bold*"],
+    ["*italic*", "_italic_"],
+    ["_italic_", "_italic_"],
+    ["~~strike~~", "~strike~"],
+    ["`**code**`", "`**code**`"],
+    ["```\n**block**\n```", "```\n**block**\n```"],
+    ["# Title", "*Title*"],
+    [
+      "**negrito** _itálico_ ~~riscado~~ `mono`",
+      "*negrito* _itálico_ ~riscado~ `mono`"
+    ],
+    ["**Ana:**\nhello", "*Ana:*\nhello"],
+    ["*a* *b*", "_a_ _b_"],
+    ["2*3*4", "2*3*4"],
+    ["2 * 3 * 4", "2 * 3 * 4"],
+    ["file_name_v2.pdf", "file_name_v2.pdf"],
+    ["- item 1\n- item 2", "- item 1\n- item 2"],
+    ["plain text", "plain text"]
+  ],
+  "whatsappToMarkdown": [
+    ["*bold*", "**bold**"],
+    ["_italic_", "_italic_"],
+    ["~strike~", "~~strike~~"],
+    ["`*code*`", "`*code*`"],
+    ["```\n*block*\n```", "```\n*block*\n```"],
+    ["*negrito* _itálico_ ~riscado~", "**negrito** _itálico_ ~~riscado~~"],
+    ["*a* *b*", "**a** **b**"],
+    ["**already**", "**already**"],
+    ["2*3*4", "2*3*4"],
+    ["* item\n* other", "* item\n* other"],
+    ["a_b.pdf", "a_b.pdf"],
+    ["*multi\nline*", "*multi\nline*"],
+    ["plain text", "plain text"]
+  ],
+  "roundTrip": [
+    "*bold*",
+    "_italic_",
+    "~strike~",
+    "`code`",
+    "*negrito* _itálico_ ~riscado~ `mono`",
+    "*Ana:*\nolá",
+    "2*3*4 a_b.pdf"
+  ]
+}

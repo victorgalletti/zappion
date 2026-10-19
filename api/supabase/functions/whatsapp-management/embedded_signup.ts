@@ -1,0 +1,621 @@
+import * as log from "../_shared/logger.ts";
+import { Json } from "../_shared/db_types.ts";
+import { HTTPException } from "jsr:@hono/hono/http-exception";
+import {
+  type createClient,
+  createUnsecureClient,
+  type WhatsAppOrganizationAddressExtra,
+} from "../_shared/supabase.ts";
+import { ContentfulStatusCode } from "jsr:@hono/hono/utils/http-status";
+import {
+  accessTokenFor,
+  resolveApp,
+  storeAccessToken,
+} from "../_shared/zappion_whatsapp_credentials.ts";
+
+const API_VERSION = "v24.0";
+
+/** Normalize phone number to digits only (e.g., "+54 9 260 423 7115" -> "5492604237115") */
+export function normalizePhoneNumber(phone: string): string {
+  return phone.replace(/\D/g, "");
+}
+
+// Step 1
+async function getBusinessAccessToken(
+  app_id: string,
+  app_secret: string,
+  code: string,
+): Promise<string> {
+  const response = await fetch(
+    `https://graph.facebook.com/${API_VERSION}/oauth/access_token?client_id=${app_id}&client_secret=${app_secret}&code=${code}`,
+  );
+
+  if (!response.ok) {
+    throw new HTTPException(response.status as ContentfulStatusCode, {
+      message: "Could not get business access token",
+      cause: await response.json().catch(() => ({})),
+    });
+  }
+
+  return (await response.json()).access_token;
+}
+
+// Step 2
+export async function postSubscribeToWebhooks(
+  business_access_token: string,
+  waba_id: string,
+  url?: string,
+  token?: string,
+): Promise<boolean> {
+  let response = await fetch(
+    `https://graph.facebook.com/${API_VERSION}/${waba_id}/subscribed_apps`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${business_access_token}`,
+      },
+    },
+  );
+
+  if (!response.ok) {
+    throw new HTTPException(response.status as ContentfulStatusCode, {
+      message: "Could not subscribe to webhooks",
+      cause: await response.json().catch(() => ({})),
+    });
+  }
+
+  if (url && token) {
+    // Callback URL override is a two-step process that requires subscribing
+    // first to the default callback URL and then overriding it.
+    // https://developers.facebook.com/documentation/business-messaging/whatsapp/webhooks/override
+    response = await fetch(
+      `https://graph.facebook.com/${API_VERSION}/${waba_id}/subscribed_apps`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${business_access_token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          override_callback_uri: url,
+          verify_token: token,
+        }),
+      },
+    );
+
+    if (!response.ok) {
+      throw new HTTPException(response.status as ContentfulStatusCode, {
+        message: "Could not override callback URL",
+        cause: await response.json().catch(() => ({})),
+      });
+    }
+  }
+
+  return (await response.json()).success;
+}
+
+// Step 3
+export async function postRegisterPhoneNumber(
+  business_access_token: string,
+  phone_number_id: string,
+  pin: string,
+): Promise<boolean> {
+  const response = await fetch(
+    `https://graph.facebook.com/${API_VERSION}/${phone_number_id}/register`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${business_access_token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        messaging_product: "whatsapp",
+        pin,
+      }),
+    },
+  );
+
+  if (!response.ok) {
+    throw new HTTPException(response.status as ContentfulStatusCode, {
+      message: "Could not register phone number",
+      cause: await response.json().catch(() => ({})),
+    });
+  }
+
+  return (await response.json()).success;
+}
+
+export async function getPhoneNumber(
+  business_access_token: string,
+  phone_number_id: string,
+): Promise<{
+  code_verification_status: string;
+  display_phone_number: string;
+  id: string;
+  quality_rating: string;
+  verified_name: string;
+}> {
+  const response = await fetch(
+    `https://graph.facebook.com/${API_VERSION}/${phone_number_id}`,
+    {
+      headers: { Authorization: `Bearer ${business_access_token}` },
+    },
+  );
+
+  if (!response.ok) {
+    throw new HTTPException(response.status as ContentfulStatusCode, {
+      message: "Could not get phone number data",
+      cause: await response.json().catch(() => ({})),
+    });
+  }
+
+  return await response.json();
+}
+
+/**
+ * The number on a WABA, for an Embedded Signup v4 coexistence finish that
+ * names only the WABA. The flow onboards one app number, so anything but
+ * exactly one is a WABA we cannot read the choice from.
+ */
+async function getWabaPhoneNumberId(
+  business_access_token: string,
+  waba_id: string,
+): Promise<string> {
+  const response = await fetch(
+    `https://graph.facebook.com/${API_VERSION}/${waba_id}/phone_numbers?fields=id`,
+    {
+      headers: { Authorization: `Bearer ${business_access_token}` },
+    },
+  );
+
+  if (!response.ok) {
+    throw new HTTPException(response.status as ContentfulStatusCode, {
+      message: "Could not list the WABA's phone numbers",
+      cause: await response.json().catch(() => ({})),
+    });
+  }
+
+  const { data } = (await response.json()) as { data: { id: string }[] };
+
+  if (data.length !== 1) {
+    throw new HTTPException(422, {
+      message:
+        `Expected one phone number on WABA ${waba_id}, found ${data.length}`,
+    });
+  }
+
+  return data[0].id;
+}
+
+async function postInitDataSync(
+  business_access_token: string,
+  phone_number_id: string,
+  type: "contacts" | "messages",
+): Promise<{
+  messaging_product: "whatsapp";
+  request_id: string;
+}> {
+  log.info(`Initiating app data sync for ${phone_number_id} ${type}`);
+
+  const syncTypeMap = {
+    contacts: "smb_app_state_sync",
+    messages: "history",
+  };
+
+  const response = await fetch(
+    `https://graph.facebook.com/${API_VERSION}/${phone_number_id}/smb_app_data`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${business_access_token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        messaging_product: "whatsapp",
+        sync_type: syncTypeMap[type],
+      }),
+    },
+  );
+
+  if (!response.ok) {
+    throw new HTTPException(response.status as ContentfulStatusCode, {
+      message: `Could not initiate ${type} app data synchronization`,
+      cause: await response.json().catch(() => ({})),
+    });
+  }
+
+  return await response.json();
+}
+
+export type SignupPayload = {
+  /**
+   * Optional: connects the number as this member's PERSONAL channel — the
+   * address row carries it, scoping its conversations to that member alone.
+   * Absent is the org's shared inbox.
+   */
+  agent_id?: string;
+  code: string;
+  application_id?: string;
+  organization_id: string;
+  phone_number_id?: string;
+  waba_id?: string;
+  business_id?: string;
+  flow_type?: "only_waba" | "new_phone_number" | "existing_phone_number";
+  callback_url?: string;
+  verify_token?: string;
+};
+
+export async function performEmbeddedSignup(
+  client: ReturnType<typeof createClient>,
+  payload: SignupPayload,
+) {
+  if (!payload.code) {
+    throw new HTTPException(400, { message: "Missing 'code' body param!" });
+  }
+
+  if (!payload.organization_id) {
+    throw new HTTPException(400, {
+      message: "Missing 'organization_id' body param!",
+    });
+  }
+
+  if (!payload.waba_id) {
+    throw new HTTPException(400, {
+      message: "Missing 'waba_id' body param!",
+    });
+  }
+
+  if (
+    !payload.phone_number_id && payload.flow_type !== "existing_phone_number"
+  ) {
+    throw new HTTPException(400, {
+      message: "Missing 'phone_number_id' body param!",
+    });
+  }
+
+  // The organization's own App (if it is the one named) or an env App.
+  const app = await resolveApp(
+    createUnsecureClient(),
+    payload.application_id ?? null,
+  );
+
+  if (!app) {
+    throw new HTTPException(500, {
+      message: payload.application_id
+        ? `Unknown Meta App '${payload.application_id}'`
+        : "No Meta App configured (META_APP_ID / META_APP_SECRET)",
+    });
+  }
+
+  // An organization's App can only onboard numbers into that organization.
+  if (app.organization_id && app.organization_id !== payload.organization_id) {
+    throw new HTTPException(403, {
+      message: "This Meta App belongs to another organization",
+    });
+  }
+
+  const { app_id, app_secret } = app;
+
+  // Attached to every step log so concurrent onboardings can be told apart in
+  // stdout.
+  const ctx = {
+    organization_id: payload.organization_id,
+    phone_number_id: payload.phone_number_id,
+    waba_id: payload.waba_id,
+  };
+
+  log.info("Step 1: Exchange the token code for a business token", ctx);
+  const business_access_token = await getBusinessAccessToken(
+    app_id,
+    app_secret,
+    payload.code,
+  );
+
+  if (!payload.phone_number_id) {
+    log.info(
+      "Coexistence finish named no number: reading it off the WABA",
+      ctx,
+    );
+    payload.phone_number_id = await getWabaPhoneNumberId(
+      business_access_token,
+      payload.waba_id,
+    );
+    ctx.phone_number_id = payload.phone_number_id;
+  }
+
+  log.info("Step 2: Subscribe to webhooks on the customer's WABA", ctx);
+  await postSubscribeToWebhooks(
+    business_access_token,
+    payload.waba_id,
+    payload.callback_url,
+    payload.verify_token,
+  );
+
+  if (payload.flow_type === "existing_phone_number") {
+    log.info("Coexistence flow: Skipping step 3", ctx);
+  } else {
+    log.info("Step 3: Register the customer's phone number", ctx);
+    const pin = "123456";
+    await postRegisterPhoneNumber(
+      business_access_token,
+      payload.phone_number_id,
+      pin,
+    );
+  }
+
+  log.info("Getting phone number data", ctx);
+  const phone_number = await getPhoneNumber(
+    business_access_token,
+    payload.phone_number_id,
+  );
+
+  log.info("Persisting phone number data", ctx);
+  const { data, error } = await client
+    .from("organizations_addresses")
+    .upsert({
+      service: "whatsapp",
+      address: payload.phone_number_id,
+      organization_id: payload.organization_id,
+      agent_id: payload.agent_id ?? null,
+      status: "connected",
+      extra: {
+        waba_id: payload.waba_id,
+        business_id: payload.business_id,
+        flow_type: payload.flow_type,
+        phone_number: normalizePhoneNumber(phone_number.display_phone_number),
+        verified_name: phone_number.verified_name,
+        callback_url: payload.callback_url || null,
+        verify_token: payload.verify_token || null,
+      },
+    })
+    .select()
+    .single();
+
+  if (error) {
+    throw new HTTPException(500, {
+      message: "Could not persist phone number data",
+      cause: error,
+    });
+  }
+
+  // The token goes to Vault, never to extra (which members can read).
+  await storeAccessToken(
+    createUnsecureClient(),
+    payload.organization_id,
+    data.address,
+    business_access_token,
+  );
+
+  log.info("Account connected", ctx);
+
+  // Record the connection to public.logs (best-effort) so the org's
+  // tech-provider sees good events too, not just failures.
+  await client.from("logs").insert({
+    organization_id: payload.organization_id,
+    organization_address: data.address,
+    category: "signup",
+    service: "whatsapp",
+    level: "info",
+    message: "WhatsApp account connected",
+  });
+
+  // App data sync (historical contacts + message-history import) is a
+  // coexistence-only, best-effort step: Meta only allows it within 24h of the
+  // WABA's onboarding (error 135000 otherwise). A sync failure must NOT fail the
+  // signup — the number is already connected and persisted above — so log and
+  // continue. The two syncs are independent, so one failing must not skip the
+  // other.
+  if (payload.flow_type === "existing_phone_number") {
+    try {
+      log.info("Step 4: Initiating contacts sync", ctx);
+      await postInitDataSync(
+        business_access_token,
+        payload.phone_number_id,
+        "contacts",
+      );
+    } catch (error) {
+      const cause = error instanceof HTTPException ? error.cause : error;
+      log.warn(
+        "Contacts sync failed (non-fatal): number connected, but historical contacts were not imported",
+        { ...ctx, cause },
+      );
+      await client.from("logs").insert({
+        organization_id: payload.organization_id,
+        organization_address: payload.phone_number_id,
+        category: "signup",
+        service: "whatsapp",
+        level: "warning",
+        message: "Historical contacts were not imported (sync did not run)",
+        metadata: cause as Json,
+      });
+    }
+
+    try {
+      log.info("Step 5: Initiating messages sync", ctx);
+      await postInitDataSync(
+        business_access_token,
+        payload.phone_number_id,
+        "messages",
+      );
+    } catch (error) {
+      const cause = error instanceof HTTPException ? error.cause : error;
+      log.warn(
+        "Messages sync failed (non-fatal): number connected, but historical messages were not imported",
+        { ...ctx, cause },
+      );
+      await client.from("logs").insert({
+        organization_id: payload.organization_id,
+        organization_address: payload.phone_number_id,
+        category: "signup",
+        service: "whatsapp",
+        level: "warning",
+        message: "Historical messages were not imported (sync did not run)",
+        metadata: cause as Json,
+      });
+    }
+  }
+
+  return data;
+}
+
+async function deregisterPhoneNumber(
+  business_access_token: string,
+  phone_number_id: string,
+): Promise<boolean> {
+  log.info(`Deregistering phone number: ${phone_number_id}`);
+
+  const response = await fetch(
+    `https://graph.facebook.com/${API_VERSION}/${phone_number_id}/deregister`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${business_access_token}`,
+        "Content-Type": "application/json",
+      },
+    },
+  );
+
+  if (!response.ok) {
+    throw new HTTPException(response.status as ContentfulStatusCode, {
+      message: "Could not deregister phone number",
+      cause: await response.json().catch(() => ({})),
+    });
+  }
+
+  return (await response.json()).success;
+}
+
+export async function deleteSignup(
+  client: ReturnType<typeof createClient>,
+  payload: { phone_number_id: string; organization_id: string },
+) {
+  const { phone_number_id, organization_id } = payload;
+
+  const { data: organization_address } = await client
+    .from("organizations_addresses")
+    .select()
+    .eq("organization_id", organization_id)
+    .eq("address", phone_number_id)
+    .single()
+    .throwOnError();
+
+  const extra =
+    (organization_address.extra as WhatsAppOrganizationAddressExtra | null) ||
+    {};
+
+  if (extra.flow_type !== "new_phone_number") {
+    throw new HTTPException(403, {
+      message:
+        "Cannot deregister organization address. Only new phone numbers can be deregistered.",
+    });
+  }
+
+  await deregisterPhoneNumber(
+    await accessTokenFor(
+      createUnsecureClient(),
+      organization_id,
+      phone_number_id,
+    ),
+    phone_number_id,
+  );
+
+  const { data } = await client
+    .from("organizations_addresses")
+    .update({
+      status: "disconnected",
+    })
+    .eq("organization_id", organization_id)
+    .eq("address", phone_number_id)
+    .select()
+    .single()
+    .throwOnError();
+
+  return data;
+}
+
+/**
+ * What Embedded Signup's popup posts to the page when it closes without a
+ * finish the page knows: the step the user left at, Meta's own error, or an
+ * event name the page does not handle. Nothing of it reaches the signup
+ * route, so it is the only record of an attempt that Meta stopped — a
+ * coexistence option Meta did not offer, a number it refused.
+ */
+export type SignupPopupEvent = {
+  organization_id: string;
+  event?: unknown;
+  data?: unknown;
+};
+
+const POPUP_FIELDS = [
+  "current_step",
+  "error_message",
+  "error_id",
+  "session_id",
+  "timestamp",
+  "waba_id",
+  "phone_number_id",
+  "business_id",
+] as const;
+
+// The browser relays the popup's message as is, so only Meta's known fields
+// are kept, as bounded strings.
+function popupField(value: unknown): string | undefined {
+  if (typeof value === "string") return value.slice(0, 500);
+  if (typeof value === "number") return String(value);
+  return undefined;
+}
+
+export async function recordSignupPopupEvent(
+  client: ReturnType<typeof createClient>,
+  payload: SignupPopupEvent,
+) {
+  const event = popupField(payload.event)?.slice(0, 64);
+
+  if (!event) {
+    throw new HTTPException(400, { message: "Missing 'event' body param!" });
+  }
+
+  const data =
+    (payload.data && typeof payload.data === "object"
+      ? payload.data
+      : {}) as Record<string, unknown>;
+
+  const metadata: Record<string, string> = { event };
+
+  for (const field of POPUP_FIELDS) {
+    const value = popupField(data[field]);
+    if (value !== undefined) metadata[field] = value;
+  }
+
+  const { level, message } = metadata.error_message
+    ? {
+      level: "error" as const,
+      message: `Meta signup error: ${metadata.error_message}`,
+    }
+    : event === "CANCEL"
+    ? {
+      level: "warning" as const,
+      message: `Signup abandoned at step ${metadata.current_step ?? "unknown"}`,
+    }
+    : {
+      level: "warning" as const,
+      message: `Unhandled signup event ${event}`,
+    };
+
+  log.info("Signup popup event", {
+    organization_id: payload.organization_id,
+    ...metadata,
+  });
+
+  await client
+    .from("logs")
+    .insert({
+      organization_id: payload.organization_id,
+      category: "signup",
+      service: "whatsapp",
+      level,
+      message,
+      metadata,
+    })
+    .throwOnError();
+}

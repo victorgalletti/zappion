@@ -1,0 +1,34 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zappion.Windows", "Zappion.Windows\Zappion.Windows.csproj", "{AE0B697F-AD18-4E68-A82D-7DF7A48F37FA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zappion.Windows.Core", "Zappion.Windows.Core\Zappion.Windows.Core.csproj", "{04F50C9E-4E0A-4035-936E-D893089A46F7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zappion.Windows.Tests", "Zappion.Windows.Tests\Zappion.Windows.Tests.csproj", "{4F8AA42B-00E3-4388-9A8C-AA78B49D1D9D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AE0B697F-AD18-4E68-A82D-7DF7A48F37FA}.Debug|x64.ActiveCfg = Debug|x64
+		{AE0B697F-AD18-4E68-A82D-7DF7A48F37FA}.Debug|x64.Build.0 = Debug|x64
+		{AE0B697F-AD18-4E68-A82D-7DF7A48F37FA}.Release|x64.ActiveCfg = Release|x64
+		{AE0B697F-AD18-4E68-A82D-7DF7A48F37FA}.Release|x64.Build.0 = Release|x64
+		{04F50C9E-4E0A-4035-936E-D893089A46F7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{04F50C9E-4E0A-4035-936E-D893089A46F7}.Debug|x64.Build.0 = Debug|Any CPU
+		{04F50C9E-4E0A-4035-936E-D893089A46F7}.Release|x64.ActiveCfg = Release|Any CPU
+		{04F50C9E-4E0A-4035-936E-D893089A46F7}.Release|x64.Build.0 = Release|Any CPU
+		{4F8AA42B-00E3-4388-9A8C-AA78B49D1D9D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4F8AA42B-00E3-4388-9A8C-AA78B49D1D9D}.Debug|x64.Build.0 = Debug|Any CPU
+		{4F8AA42B-00E3-4388-9A8C-AA78B49D1D9D}.Release|x64.ActiveCfg = Release|Any CPU
+		{4F8AA42B-00E3-4388-9A8C-AA78B49D1D9D}.Release|x64.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

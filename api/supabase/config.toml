@@ -1,0 +1,86 @@
+# For detailed configuration reference documentation, visit:
+# https://supabase.com/docs/guides/local-development/cli/config
+
+project_id = "zappion"
+
+[api]
+schemas = ["public", "storage"]
+
+# Auth. site_url is the frontend origin; it + the OAuth authorization path form
+# the consent UI URL the native OAuth server redirects to. In prod, Site URL is
+# set in the dashboard (Authentication > URL Configuration).
+[auth]
+site_url = "http://localhost:5173"
+
+# Native OAuth 2.1 server (Supabase Auth as the authorization server) — lets
+# MCP clients (Claude Code/Desktop, ChatGPT) authenticate against the `mcp`
+# edge function via OAuth with dynamic client registration. The consent UI
+# lives in zappion-web at site_url + authorization_url_path. NOTE: CI deploys
+# functions but not this config — enable the OAuth server in PROD via the
+# dashboard (Authentication > OAuth Server) or a one-time `supabase config
+# push`.
+[auth.oauth_server]
+enabled = true
+authorization_url_path = "/oauth/consent"
+allow_dynamic_registration = true
+
+[functions.whatsapp-webhook]
+verify_jwt = false
+import_map = "./functions/deno.json"
+entrypoint = "./functions/whatsapp-webhook/index.ts"
+
+[functions.instagram-webhook]
+verify_jwt = false
+import_map = "./functions/deno.json"
+entrypoint = "./functions/instagram-webhook/index.ts"
+
+[functions.whatsapp-management]
+verify_jwt = false
+import_map = "./functions/deno.json"
+entrypoint = "./functions/whatsapp-management/index.ts"
+
+[functions.instagram-management]
+verify_jwt = false
+import_map = "./functions/deno.json"
+entrypoint = "./functions/instagram-management/index.ts"
+
+[functions.media-preprocessor]
+verify_jwt = false
+import_map = "./functions/deno.json"
+entrypoint = "./functions/media-preprocessor/index.ts"
+
+[functions.agent-client]
+verify_jwt = false
+import_map = "./functions/deno.json"
+entrypoint = "./functions/agent-client/index.ts"
+
+[functions.whatsapp-dispatcher]
+verify_jwt = false
+import_map = "./functions/deno.json"
+entrypoint = "./functions/whatsapp-dispatcher/index.ts"
+
+# Connector services deploy the generic webhook/dispatcher under their own
+# slug (the dispatcher trigger routes by `/{service}-dispatcher`); the
+# generic code derives the service from the slug. Zappion has no connector
+# configured yet (the whatsapp-web one was removed); add a pair here for one.
+[functions.instagram-dispatcher]
+verify_jwt = false
+import_map = "./functions/deno.json"
+entrypoint = "./functions/instagram-dispatcher/index.ts"
+
+[functions.mcp]
+verify_jwt = false
+import_map = "./functions/deno.json"
+entrypoint = "./functions/mcp/index.ts"
+# Zappion: the MCP Apps screens, read at runtime by zappion_apps.ts.
+static_files = ["./functions/mcp/ui/*"]
+
+[functions.storage-gc]
+verify_jwt = false
+import_map = "./functions/deno.json"
+entrypoint = "./functions/storage-gc/index.ts"
+
+# Local only: 54324 collides on this machine.
+[inbucket]
+enabled = true
+port = 54334

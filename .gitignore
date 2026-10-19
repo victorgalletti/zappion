@@ -1,0 +1,17 @@
+# Secrets and local environments
+.env
+.env.*
+!.env.example
+signup/.env
+
+# Dependencies and builds
+node_modules/
+.next/
+*.tsbuildinfo
+next-env.d.ts
+
+.DS_Store
+
+# Claude Code: share the dev server launcher, keep local settings out
+.claude/*
+!.claude/launch.json

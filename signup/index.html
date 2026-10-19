@@ -1,0 +1,122 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: AGPL-3.0-only -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connect WhatsApp</title>
+<style>
+  :root { --bg: #f6f7f9; --fg: #1c1e21; --muted: #65676b; --accent: #1877f2; --ok: #1a7f37; --err: #c62828; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #18191a; --fg: #e4e6eb; --muted: #b0b3b8; } }
+  body { margin: 0; font: 16px/1.5 system-ui, sans-serif; background: var(--bg); color: var(--fg); }
+  main { max-width: 560px; margin: 48px auto; padding: 0 16px; }
+  button { font: inherit; font-weight: 600; padding: 12px 20px; border: 0; border-radius: 8px; background: var(--accent); color: #fff; cursor: pointer; }
+  button:disabled { opacity: .5; cursor: default; }
+  ol { color: var(--muted); padding-left: 20px; }
+  pre { white-space: pre-wrap; word-break: break-word; font-size: 13px; color: var(--muted); }
+  .ok { color: var(--ok); } .err { color: var(--err); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Connect the WhatsApp Business app</h1>
+  <p id="org">Checking invitation…</p>
+  <ol>
+    <li>Click the button and sign in with the Facebook account that owns the business portfolio.</li>
+    <li>Choose to connect an <strong>existing WhatsApp Business app</strong> and enter the number.</li>
+    <li>On the phone: <strong>Connect</strong> › <strong>Connect to a business platform</strong> › accept sharing the chat history.</li>
+  </ol>
+  <button id="go" disabled>Connect WhatsApp</button>
+  <p id="status"></p>
+  <pre id="log"></pre>
+</main>
+<script>
+  const APP_ID = "__META_APP_ID__";
+  const CONFIG_ID = "__META_CONFIG_ID__";
+  const GRAPH_VERSION = "v24.0";
+  const API = "/functions/v1/whatsapp-management";
+  const token = new URLSearchParams(location.search).get("token");
+
+  const $ = (id) => document.getElementById(id);
+  const log = (msg) => { $("log").textContent += msg + "\n"; };
+  const status = (msg, cls = "") => { $("status").textContent = msg; $("status").className = cls; };
+
+  // The popup reports progress by postMessage; the finish event carries the
+  // WABA (and sometimes the number) that the code alone does not name.
+  let session = null;
+  window.addEventListener("message", (event) => {
+    if (!event.origin.endsWith("facebook.com")) return;
+    let data;
+    try { data = JSON.parse(event.data); } catch { return; }
+    if (data.type !== "WA_EMBEDDED_SIGNUP") return;
+    log(`event: ${data.event} ${JSON.stringify(data.data ?? {})}`);
+    if (String(data.event).startsWith("FINISH")) session = data;
+    fetch(`${API}/onboard/events`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token, event: data.event, data: data.data }),
+    }).catch(() => {});
+  });
+
+  // The code callback can beat the finish message; give it a moment.
+  async function waitForSession(ms = 8000) {
+    const until = Date.now() + ms;
+    while (!session && Date.now() < until) await new Promise((r) => setTimeout(r, 200));
+    return session;
+  }
+
+  async function finish(code) {
+    status("Finishing the connection…");
+    const s = await waitForSession();
+    if (!s?.data?.waba_id) {
+      status("Meta did not return the account (WABA). See the log below.", "err");
+      return;
+    }
+    const response = await fetch(`${API}/onboard`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        token,
+        code,
+        application_id: APP_ID,
+        waba_id: s.data.waba_id,
+        phone_number_id: s.data.phone_number_id,
+        business_id: s.data.business_id,
+        flow_type: s.event === "FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING" ? "existing_phone_number" : undefined,
+      }),
+    });
+    const text = await response.text();
+    log(`onboard ${response.status}: ${text}`);
+    if (response.ok) status("Connected! You can close this page.", "ok");
+    else status("Finishing failed. See the log below.", "err");
+  }
+
+  $("go").addEventListener("click", () => {
+    status("Opening the Meta window…");
+    FB.login((response) => {
+      const code = response.authResponse?.code;
+      if (code) finish(code);
+      else status("The window was closed before finishing.", "err");
+    }, {
+      config_id: CONFIG_ID,
+      response_type: "code",
+      override_default_response_type: true,
+      extras: { setup: {}, featureType: "whatsapp_business_app_onboarding", sessionInfoVersion: "3" },
+    });
+  });
+
+  window.fbAsyncInit = () => {
+    FB.init({ appId: APP_ID, autoLogAppEvents: true, xfbml: false, version: GRAPH_VERSION });
+  };
+
+  (async () => {
+    if (!token) { $("org").textContent = "The invitation ?token= is missing from the URL."; return; }
+    const r = await fetch(`${API}/onboard?token=${encodeURIComponent(token)}`).then((r) => r.json()).catch(() => null);
+    if (!r?.valid) { $("org").textContent = "Invalid or expired invitation."; return; }
+    $("org").textContent = `Organization: ${r.organization_name}`;
+    $("go").disabled = false;
+  })();
+</script>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+</body>
+</html>
