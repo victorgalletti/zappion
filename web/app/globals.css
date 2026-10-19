@@ -126,7 +126,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* The chat wallpaper: the whatsapp-web-ui doodle over the room color. */
+/* The chat wallpaper: Zappion's doodle (scripts/chat-wallpaper.py) over the room color. */
 .chat-wallpaper {
   position: relative;
   background: var(--wa-chat-bg);
@@ -135,7 +135,7 @@ body {
   content: "";
   position: absolute;
   inset: 0;
-  background: url("/images/bg-chat-room.png") repeat;
+  background: url("/images/chat-wallpaper.svg") repeat;
   opacity: var(--wa-chat-pattern-opacity);
   pointer-events: none;
 }

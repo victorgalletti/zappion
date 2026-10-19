@@ -202,7 +202,7 @@ internal static class DeliveryIcon
     }
 }
 
-// Mirrors globals.css .chat-wallpaper: tile at native image size, theme opacity.
+// Mirrors globals.css .chat-wallpaper: 400px tiles (the PNG is 2x), theme opacity.
 public sealed class ChatWallpaper : Canvas
 {
     private readonly Microsoft.UI.Xaml.Media.Imaging.BitmapImage bitmap = new(new Uri("ms-appx:///Assets/Wallpaper.png"));
@@ -216,10 +216,10 @@ public sealed class ChatWallpaper : Canvas
 
         Clip = new RectangleGeometry { Rect = new global::Windows.Foundation.Rect(0, 0, ActualWidth, ActualHeight) };
         Opacity = ActualTheme == ElementTheme.Dark ? .08 : .4;
-        for (var y = 0; y < ActualHeight; y += 981)
-            for (var x = 0; x < ActualWidth; x += 540)
+        for (var y = 0; y < ActualHeight; y += 400)
+            for (var x = 0; x < ActualWidth; x += 400)
             {
-                var image = new Image { Source = bitmap, Width = 540, Height = 981, Stretch = Stretch.Fill };
+                var image = new Image { Source = bitmap, Width = 400, Height = 400, Stretch = Stretch.Fill };
                 SetLeft(image, x); SetTop(image, y); Children.Add(image);
             }
     }

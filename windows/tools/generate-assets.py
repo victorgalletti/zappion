@@ -13,4 +13,4 @@ with Image.open(root / 'web/public/images/zappion-logo.png') as source:
     canvas.alpha_composite(logo, ((256-logo.width)//2, (256-logo.height)//2))
     canvas.save(out / 'AppIcon.ico', sizes=[(n, n) for n in (16, 24, 32, 48, 64, 256)])
 
-copyfile(root / 'web/public/images/bg-chat-room.png', out / 'Wallpaper.png')
+copyfile(root / 'web/public/images/chat-wallpaper.png', out / 'Wallpaper.png')

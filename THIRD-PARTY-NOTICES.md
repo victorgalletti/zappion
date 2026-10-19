@@ -12,5 +12,5 @@ following third-party material, each under its own license. Dependencies install
 
 ## Trademarks
 
-WhatsApp and the WhatsApp logo (`web/public/icons/whatsapp*.svg`) are trademarks of Meta Platforms, Inc.,
+WhatsApp and the WhatsApp logo are trademarks of Meta Platforms, Inc.,
 used only to identify the WhatsApp channel. Zappion is not affiliated with or endorsed by Meta.
